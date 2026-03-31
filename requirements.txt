@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+PyMuPDF
+openai
+sqlalchemy
+jinja2
+requests
+python-dotenv
+psycopg2-binary
+reportlab

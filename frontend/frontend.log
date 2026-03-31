@@ -1,0 +1,211 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.2.235:3000
+✓ Ready in 444ms
+
+ GET / 200 in 249ms (next.js: 129ms, application-code: 120ms)
+ GET / 200 in 35ms (next.js: 3ms, application-code: 32ms)
+ GET / 200 in 33ms (next.js: 5ms, application-code: 28ms)
+ GET / 200 in 118ms (next.js: 35ms, application-code: 83ms)
+ GET /settings 200 in 193ms (next.js: 150ms, application-code: 43ms)
+ GET /templates 200 in 103ms (next.js: 56ms, application-code: 47ms)
+ GET / 200 in 87ms (next.js: 33ms, application-code: 54ms)
+ GET /templates 200 in 40ms (next.js: 8ms, application-code: 32ms)
+ GET / 200 in 90ms (next.js: 28ms, application-code: 62ms)
+ GET /templates 200 in 130ms (next.js: 26ms, application-code: 104ms)
+ GET /settings 200 in 92ms (next.js: 23ms, application-code: 69ms)
+✓ Compiled in 1069ms
+ GET / 200 in 119ms (next.js: 45ms, application-code: 73ms)
+ GET / 200 in 44ms (next.js: 5ms, application-code: 39ms)
+ GET / 200 in 171ms (next.js: 46ms, application-code: 125ms)
+ GET / 200 in 87ms (next.js: 28ms, application-code: 59ms)
+ GET /templates 200 in 101ms (next.js: 46ms, application-code: 55ms)
+ GET /settings 200 in 38ms (next.js: 9ms, application-code: 28ms)
+ GET / 200 in 78ms (next.js: 41ms, application-code: 37ms)
+ GET /templates 200 in 49ms (next.js: 14ms, application-code: 35ms)
+✓ Compiled in 148ms
+ GET / 200 in 43ms (next.js: 10ms, application-code: 33ms)
+✓ Compiled in 115ms
+✓ Compiled in 257ms
+ GET /templates 200 in 66ms (next.js: 26ms, application-code: 40ms)
+✓ Compiled in 189ms
+✓ Compiled in 205ms
+ GET / 200 in 69ms (next.js: 20ms, application-code: 49ms)
+✓ Compiled in 46ms
+ GET / 200 in 95ms (next.js: 41ms, application-code: 54ms)
+✓ Compiled in 472ms
+✓ Compiled in 260ms
+ GET /settings 200 in 76ms (next.js: 33ms, application-code: 43ms)
+ GET /templates 200 in 36ms (next.js: 12ms, application-code: 24ms)
+ GET / 200 in 45ms (next.js: 19ms, application-code: 26ms)
+✓ Compiled in 135ms
+✓ Compiled in 678ms
+ GET / 200 in 476ms (next.js: 365ms, application-code: 110ms)
+ GET / 200 in 477ms (next.js: 307ms, application-code: 170ms)
+ GET /templates 200 in 483ms (next.js: 392ms, application-code: 91ms)
+ GET / 200 in 91ms (next.js: 11ms, application-code: 80ms)
+ GET / 200 in 96ms (next.js: 28ms, application-code: 68ms)
+ GET /templates 200 in 116ms (next.js: 34ms, application-code: 83ms)
+ GET /templates 200 in 67ms (next.js: 5ms, application-code: 62ms)
+ GET /templates 200 in 40ms (next.js: 5ms, application-code: 36ms)
+✓ Compiled in 39ms
+[browser] In HTML, <div> cannot be a child of <tbody>.
+This will cause a hydration error.
+
+  ...
+    <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<SegmentViewNode>} forbidden={undefined} ...>
+      <RedirectBoundary>
+        <RedirectErrorBoundary router={{...}}>
+          <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:Promise, ...}} segmentPath={[...]} ...>
+            <SegmentViewNode type="page" pagePath="page.tsx">
+              <SegmentTrieNode>
+              <ClientPageRoot Component={function HomePage} serverProvidedParams={{...}}>
+                <HomePage params={Promise} searchParams={Promise}>
+                  <div className="shell">
+                    <aside>
+                    <main className="main">
+                      <header>
+                      <LuminaireTable items={[...]} customColumns={[...]} onAddColumn={function handleAddColumn} ...>
+                        <section className="table-card">
+                          <div className="table-wrap">
+                            <table>
+                              <thead>
+>                             <tbody>
+                                <TableRow>
+                                <TableRow>
+                                <TableRow>
+                                <TableRow item={{id:4, ...}} index={3} customColumns={[...]} templates={[...]} ...>
+                                  <tr>
+                                  <Lightbox imageUrl="/files/ima..." onClose={function onClose}>
+>                                   <div className="lightbox" ref={{current:null}} onClick={function onClick}>
+                                ...
+                                ...
+                    ...
+            ...
+          ...
+ 
+    at validateDOMNesting (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1963:211)
+    at completeWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6925:25)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at completeUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9622:23)
+    at performUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9557:28)
+    at workLoopSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9449:40)
+    at renderRootSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9433:13)
+    at performWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9061:186)
+    at performSyncWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10263:9)
+    at flushSyncWorkAcrossRoots_impl (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10179:316)
+    at processRootScheduleInMicrotask (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10200:106)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10274:158) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1963:211)
+[browser] <tbody> cannot contain a nested <div>.
+See this log for the ancestor stack trace. 
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1965:21)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at validateDOMNesting (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1964:178)
+    at completeWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6925:25)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at completeUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9622:23)
+    at performUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9557:28)
+    at workLoopSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9449:40)
+    at renderRootSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9433:13)
+    at performWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9061:186)
+    at performSyncWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10263:9)
+    at flushSyncWorkAcrossRoots_impl (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10179:316)
+    at processRootScheduleInMicrotask (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10200:106)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10274:158) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:1965:21)
+✓ Compiled in 369ms
+ GET / 200 in 212ms (next.js: 40ms, application-code: 172ms)
+ GET / 200 in 58ms (next.js: 13ms, application-code: 45ms)
+ GET / 200 in 48ms (next.js: 8ms, application-code: 40ms)
+ GET / 200 in 108ms (next.js: 39ms, application-code: 69ms)
+ GET / 200 in 30ms (next.js: 6ms, application-code: 24ms)
+ GET / 200 in 29ms (next.js: 1216µs, application-code: 28ms)
+[browser] An empty string ("") was passed to the src attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to src instead of an empty string. 
+    at setProp (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
+    at setInitialProperties (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:11001:27)
+    at completeWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6979:35)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at completeUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9622:23)
+    at performUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9557:28)
+    at workLoopSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9449:40)
+    at renderRootSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9433:13)
+    at performWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9061:186)
+    at performSyncWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10263:9)
+    at flushSyncWorkAcrossRoots_impl (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10179:316)
+    at processRootScheduleInMicrotask (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10200:106)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10274:158) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
+[browser] An empty string ("") was passed to the src attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to src instead of an empty string. 
+    at setProp (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
+    at setInitialProperties (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:11001:27)
+    at completeWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6979:35)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at completeUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9622:23)
+    at performUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9557:28)
+    at workLoopSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9449:40)
+    at renderRootSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9433:13)
+    at performWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9061:186)
+    at performSyncWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10263:9)
+    at flushSyncWorkAcrossRoots_impl (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10179:316)
+    at processRootScheduleInMicrotask (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10200:106)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10274:158) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
+ GET / 200 in 76ms (next.js: 23ms, application-code: 53ms)
+ GET / 200 in 66ms (next.js: 11ms, application-code: 54ms)
+ GET /templates 200 in 76ms (next.js: 36ms, application-code: 39ms)
+ GET / 200 in 26ms (next.js: 9ms, application-code: 18ms)
+ GET /templates 200 in 25ms (next.js: 5ms, application-code: 21ms)
+ GET / 200 in 23ms (next.js: 3ms, application-code: 19ms)
+ GET /templates 200 in 22ms (next.js: 4ms, application-code: 19ms)
+ GET /settings 200 in 51ms (next.js: 37ms, application-code: 14ms)
+ GET /templates 200 in 30ms (next.js: 8ms, application-code: 23ms)
+ GET / 200 in 53ms (next.js: 31ms, application-code: 22ms)
+ GET / 200 in 59ms (next.js: 9ms, application-code: 50ms)
+ GET / 200 in 51ms (next.js: 4ms, application-code: 47ms)
+ GET / 200 in 109ms (next.js: 33ms, application-code: 75ms)
+✓ Compiled in 62ms
+✓ Compiled in 76ms
+✓ Compiled in 75ms
+ GET / 200 in 95ms (next.js: 40ms, application-code: 54ms)
+ GET / 200 in 40ms (next.js: 3ms, application-code: 37ms)
+ GET / 200 in 30ms (next.js: 1351µs, application-code: 29ms)
+ GET / 200 in 40ms (next.js: 1496µs, application-code: 38ms)
+ GET /templates 200 in 38ms (next.js: 19ms, application-code: 19ms)
+ GET /settings 200 in 22ms (next.js: 4ms, application-code: 18ms)
+ GET / 200 in 24ms (next.js: 6ms, application-code: 18ms)
+✓ Compiled in 173ms
+ GET / 200 in 82ms (next.js: 25ms, application-code: 57ms)
+ GET /templates 200 in 25ms (next.js: 8ms, application-code: 17ms)
+ GET /settings 200 in 16ms (next.js: 3ms, application-code: 13ms)
+ GET /templates 200 in 13ms (next.js: 1418µs, application-code: 11ms)
+✓ Compiled in 141ms
+✓ Compiled in 33ms
+[browser] SyntaxError: Unexpected token 'S', "[Spec Code]
+" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at onDrop (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:968:75)
+    at executeDispatch (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10329:13)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at processDispatchQueue (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10355:41)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10633:13)
+    at batchedUpdates$1 (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:2253:44)
+    at dispatchEventForPluginEventSystem (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10431:9)
+    at dispatchEvent (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:13002:37)
+    at dispatchDiscreteEvent (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:12984:64)
+    at div (<anonymous>)
+    at PageDesigner (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js:980:253)
+    at ClientPageRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_0xi64u3._.js:4881:50) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:976:65)
+✓ Compiled in 48ms
+ GET /templates 200 in 122ms (next.js: 23ms, application-code: 99ms)
+✓ Compiled in 145ms
+ GET / 200 in 64ms (next.js: 29ms, application-code: 35ms)
+ GET /settings 200 in 23ms (next.js: 4ms, application-code: 19ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.2.235:3000
+✓ Ready in 553ms
+
+ GET / 200 in 719ms (next.js: 468ms, application-code: 250ms)
+ GET /settings 200 in 622ms (next.js: 522ms, application-code: 100ms)

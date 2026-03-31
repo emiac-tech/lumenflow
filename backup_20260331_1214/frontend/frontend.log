@@ -1,0 +1,516 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.2.235:3000
+✓ Ready in 296ms
+
+ GET / 200 in 232ms (next.js: 121ms, application-code: 111ms)
+Failed to proxy http://localhost:8000/api/columns AggregateError: 
+    at ignore-listed frames {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:8000
+        at <unknown> (Error: connect ECONNREFUSED ::1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 8000
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:8000
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 8000
+    }
+  ]
+}
+AggregateError: 
+    at ignore-listed frames {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:8000
+        at <unknown> (Error: connect ECONNREFUSED ::1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 8000
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:8000
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 8000
+    }
+  ]
+}
+Failed to proxy http://localhost:8000/api/luminaires AggregateError: 
+    at ignore-listed frames {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:8000
+        at <unknown> (Error: connect ECONNREFUSED ::1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 8000
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:8000
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 8000
+    }
+  ]
+}
+AggregateError: 
+    at ignore-listed frames {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:8000
+        at <unknown> (Error: connect ECONNREFUSED ::1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 8000
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:8000
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:8000) {
+      errno: -61,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 8000
+    }
+  ]
+}
+⚠ Blocked cross-origin request to Next.js dev resource /_next/webpack-hmr from "192.168.2.235".
+Cross-origin access to Next.js dev resources is blocked by default for safety.
+
+To allow this host in development, add it to "allowedDevOrigins" in next.config.js and restart the dev server:
+
+// next.config.js
+module.exports = {
+  allowedDevOrigins: ['192.168.2.235'],
+}
+
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET / 200 in 49ms (next.js: 8ms, application-code: 41ms)
+ GET / 200 in 57ms (next.js: 11ms, application-code: 46ms)
+ GET / 200 in 56ms (next.js: 11ms, application-code: 45ms)
+ GET / 200 in 58ms (next.js: 3ms, application-code: 55ms)
+ GET / 200 in 49ms (next.js: 5ms, application-code: 44ms)
+ GET / 200 in 34ms (next.js: 3ms, application-code: 31ms)
+ GET / 200 in 51ms (next.js: 1280µs, application-code: 49ms)
+ GET / 200 in 33ms (next.js: 1924µs, application-code: 31ms)
+ GET /templates 200 in 51ms (next.js: 35ms, application-code: 16ms)
+ GET /settings 200 in 51ms (next.js: 35ms, application-code: 15ms)
+ GET / 200 in 19ms (next.js: 3ms, application-code: 17ms)
+ GET /templates 200 in 57ms (next.js: 26ms, application-code: 32ms)
+ GET / 200 in 52ms (next.js: 17ms, application-code: 35ms)
+ GET /templates 200 in 24ms (next.js: 6ms, application-code: 18ms)
+ GET / 200 in 27ms (next.js: 5ms, application-code: 22ms)
+ GET /settings 200 in 26ms (next.js: 7ms, application-code: 19ms)
+ GET /templates 200 in 22ms (next.js: 5ms, application-code: 18ms)
+ GET / 200 in 23ms (next.js: 6ms, application-code: 17ms)
+ GET /settings 200 in 32ms (next.js: 7ms, application-code: 25ms)
+ GET /templates 200 in 23ms (next.js: 6ms, application-code: 17ms)
+ GET / 200 in 26ms (next.js: 6ms, application-code: 21ms)
+ GET /settings 200 in 37ms (next.js: 8ms, application-code: 29ms)
+✓ Compiled in 302ms
+✓ Compiled in 34ms
+✓ Compiled in 16ms
+✓ Compiled in 311ms
+ GET /settings 500 in 273ms (next.js: 91ms, application-code: 181ms)
+ GET /settings 500 in 392ms (next.js: 280ms, application-code: 112ms)
+ GET /settings 500 in 177ms (next.js: 128ms, application-code: 49ms)
+ GET /settings 500 in 75ms (next.js: 21ms, application-code: 55ms)
+[browser] Uncaught Error: ./src/components/LuminaireTable.tsx:89:3
+Expression expected
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/LuminaireTable.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/LuminaireTable.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+    at <unknown> (Error: ./src/components/LuminaireTable.tsx:89:3)
+    at <unknown> (Error: (./src/components/LuminaireTable.tsx:89:3)
+✓ Compiled in 89ms
+ GET /settings 200 in 192ms (next.js: 83ms, application-code: 109ms)
+ GET /templates 200 in 63ms (next.js: 38ms, application-code: 25ms)
+[browser] SyntaxError: Failed to execute 'json' on 'Response': Unexpected token 'I', "Internal S"... is not valid JSON
+    at TemplateDesigner.useCallback[fetchInitialData] (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js:192:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js:197:25)
+✓ Compiled in 229ms
+⨯ ./src/app/templates/page.tsx:341:104
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:357:17
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:351:19
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:351:20
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:385:17
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+ GET /templates 500 in 51ms (next.js: 23ms, application-code: 28ms)
+⨯ ./src/app/templates/page.tsx:341:104
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:357:17
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:351:19
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:351:20
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+
+./src/app/templates/page.tsx:385:17
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+ GET /templates 500 in 29ms (next.js: 9ms, application-code: 20ms)
+[browser] Uncaught Error: ./src/app/templates/page.tsx:357:17
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+
+    at <unknown> (Error: ./src/app/templates/page.tsx:357:17)
+    at <unknown> (Error: (./src/app/templates/page.tsx:357:17)
+⨯ ./src/app/templates/page.tsx:5:1
+Module not found: Can't resolve 'uuid'
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/templates/page.tsx:5:1
+Module not found: Can't resolve 'uuid'
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/templates/page.tsx:5:1
+Module not found: Can't resolve 'uuid'
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/templates/page.tsx:5:1
+Module not found: Can't resolve 'uuid'
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/templates/page.tsx:5:1
+Module not found: Can't resolve 'uuid'
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /templates 500 in 28ms (next.js: 18ms, application-code: 10ms)
+[browser] Uncaught Error: ./src/app/templates/page.tsx:5:1
+Module not found: Can't resolve 'uuid'
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/templates/page.tsx [Client Component Browser]
+    ./src/app/templates/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/templates/page.tsx [Client Component SSR]
+    ./src/app/templates/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./src/app/templates/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./src/app/templates/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+✓ Compiled in 47ms
+ GET /templates 200 in 314ms (next.js: 195ms, application-code: 119ms)
+✓ Compiled in 49ms
+ GET /settings 200 in 98ms (next.js: 47ms, application-code: 51ms)
+ GET /templates 200 in 24ms (next.js: 6ms, application-code: 17ms)
+✓ Compiled in 223ms
+ GET /templates 200 in 1084ms (next.js: 744ms, application-code: 340ms)
+ GET /templates 200 in 80ms (next.js: 35ms, application-code: 45ms)
+ GET / 200 in 47ms (next.js: 28ms, application-code: 20ms)
+ GET /templates 200 in 20ms (next.js: 4ms, application-code: 16ms)
+ GET /settings 200 in 44ms (next.js: 27ms, application-code: 17ms)
+ GET / 200 in 21ms (next.js: 3ms, application-code: 17ms)
+ GET / 200 in 15ms (next.js: 2ms, application-code: 13ms)
+ GET /templates 200 in 21ms (next.js: 3ms, application-code: 18ms)
+✓ Compiled in 169ms
+✓ Compiled in 62ms
+[browser] Uncaught ReferenceError: currentDesign is not defined
+    at PageDesigner (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:257:26)
+    at Object.react_stack_bottom_frame (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:15037:24)
+    at renderWithHooks (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:4620:24)
+    at updateFunctionComponent (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6081:21)
+    at beginWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6691:24)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at performUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9555:97)
+    at workLoopSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9449:40)
+    at renderRootSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9433:13)
+    at performWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9098:47)
+    at performSyncWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10263:9)
+    at flushSyncWorkAcrossRoots_impl (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10179:316)
+    at flushSyncWork$1 (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9230:86)
+    at Object.scheduleRefresh (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:299:13)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:391:33)
+    at Set.forEach (<anonymous>)
+    at Object.performReactRefresh (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:384:38)
+    at applyUpdate (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:878:31)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:886:13)
+    at ClientPageRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_0xi64u3._.js:4881:50)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 42ms
+[browser] Encountered a script tag while rendering React component. Scripts inside React components are never executed when rendering on the client. Consider using template tag instead (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template). 
+    at completeWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6945:102)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at completeUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9622:23)
+    at performUnitOfWork (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9557:28)
+    at workLoopSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9449:40)
+    at renderRootSync (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9433:13)
+    at performWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9061:186)
+    at performSyncWorkOnRoot (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10263:9)
+    at flushSyncWorkAcrossRoots_impl (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10179:316)
+    at flushSyncWork$1 (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:9230:86)
+    at Object.scheduleRefresh (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:299:13)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:391:33)
+    at Set.forEach (<anonymous>)
+    at Object.performReactRefresh (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:384:38)
+    at applyUpdate (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:878:31)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:886:13) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:6945:102)
+ GET /templates 200 in 311ms (next.js: 19ms, application-code: 292ms)
+ GET /templates 200 in 86ms (next.js: 22ms, application-code: 64ms)
+✓ Compiled in 26ms
+✓ Compiled in 41ms
+✓ Compiled in 41ms
+✓ Compiled in 20ms
+ GET / 200 in 41ms (next.js: 11ms, application-code: 30ms)
+ GET /templates 200 in 34ms (next.js: 14ms, application-code: 20ms)
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+✓ Compiled in 52ms
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+✓ Compiled in 155ms
+[browser] TypeError: Cannot read properties of undefined (reading 'name')
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:43) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:163:21)
+✓ Compiled in 135ms
+[browser] Failed to load template 404 
+    at handleTemplateChange (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:25) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Ftemplates%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:158:25)
+ GET /templates 200 in 169ms (next.js: 58ms, application-code: 111ms)
+[browser] SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON
+SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/src_0ouowh7._.js:218:21)

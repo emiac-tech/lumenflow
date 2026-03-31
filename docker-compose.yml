@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: .
+      dockerfile: backend.Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount data directories to persist SQLite database and uploaded/generated files
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+      - ./exports:/app/exports
+      - ./.env:/app/.env
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # Point the internal Next.js rewrite engine to the backend service running inside Docker
+      - API_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: always
