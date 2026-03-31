@@ -2,6 +2,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Ensure API_URL is available at build time for Next.js to bake in the correct proxy routes
+ARG API_URL=http://localhost:8000
+ENV API_URL=${API_URL}
+
 # Copy package dependencies
 COPY package*.json ./
 RUN npm ci

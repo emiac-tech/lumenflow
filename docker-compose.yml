@@ -19,8 +19,10 @@ services:
     build:
       context: ./frontend
       dockerfile: frontend.Dockerfile
+      args:
+        - API_URL=http://backend:8000
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       # Point the internal Next.js rewrite engine to the backend service running inside Docker
       - API_URL=http://backend:8000
