@@ -232,21 +232,29 @@ export default function AddLuminaireModal({
             <div className="edit-header-row">
               <div className="edit-img-box">
                 <p className="eyebrow">Photo</p>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={editProductImg || ""}
-                  alt="Product"
-                  className="edit-img"
-                />
+                {editProductImg ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={editProductImg}
+                    alt="Product"
+                    className="edit-img"
+                  />
+                ) : (
+                  <div className="edit-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--muted)', fontSize: '12px', border: '1px dashed var(--line)' }}>No Photo</div>
+                )}
               </div>
               <div className="edit-img-box">
                 <p className="eyebrow">Diagram</p>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={editDiagramImg || ""}
-                  alt="Diagram"
-                  className="edit-img"
-                />
+                {editDiagramImg ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={editDiagramImg}
+                    alt="Diagram"
+                    className="edit-img"
+                  />
+                ) : (
+                  <div className="edit-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--muted)', fontSize: '12px', border: '1px dashed var(--line)' }}>No Diagram</div>
+                )}
               </div>
               <label className="field edit-desc">
                 <span>Description</span>

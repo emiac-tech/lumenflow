@@ -349,3 +349,9 @@ Parsing ecmascript source code failed
     at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8219:17)
     at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
     at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
+✓ Compiled in 468ms
+✓ Compiled in 69ms
+ GET /templates 200 in 78ms (next.js: 41ms, application-code: 37ms)
+ GET /settings 200 in 14ms (next.js: 4ms, application-code: 10ms)
+ GET /templates 200 in 25ms (next.js: 7ms, application-code: 18ms)
+ GET / 200 in 15ms (next.js: 6ms, application-code: 9ms)
