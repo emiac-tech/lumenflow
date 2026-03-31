@@ -75,7 +75,7 @@ export default function PageDesigner() {
   const [exports, setExports] = useState<any[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [zoom, setZoom] = useState(1.3);
+  const [zoom, setZoom] = useState(1.8);
 
   useEffect(() => {
     fetch("/api/luminaires").then(r => r.json()).then(d => {
@@ -451,19 +451,6 @@ export default function PageDesigner() {
                   })}
                 </div>
             </div>
-
-            <div style={{ height: '180px', borderTop: '1px solid var(--line)', background: 'var(--panel)', padding: '20px 32px' }}>
-               <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '16px' }}>Generated Exports</h3>
-               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                  {exports.map(ex => (
-                    <a key={ex.id} href={ex.fileUrl} target="_blank" rel="noreferrer" 
-                      style={{ background: 'var(--bg)', padding: '10px 16px', borderRadius: '4px', border: '1px solid var(--line)', color: 'var(--text)', textDecoration: 'none', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)' }}></div>
-                      {ex.title}
-                    </a>
-                  ))}
-               </div>
-            </div>
           </div>
         </div>
 
@@ -486,9 +473,9 @@ export default function PageDesigner() {
                   <div className="prop-row"><label>Height</label><input type="number" value={Math.round(selectedItem.height)} onChange={e => updateSelectedItem("height", Number(e.target.value))} /></div>
                 </div>
                 <div className="prop-row"><label>Font Size</label><input type="number" value={selectedItem.style.fontSize} onChange={e => updateSelectedStyle("fontSize", Number(e.target.value))} /></div>
-                <div className="prop-row"><label>Text Color</label><input type="color" value={selectedItem.style.color} onChange={e => updateSelectedStyle("color", e.target.value)} style={{ height: '32px' }} /></div>
-                <div className="prop-row"><label>Fill Color</label><input type="color" value={selectedItem.style.backgroundColor} onChange={e => updateSelectedStyle("backgroundColor", e.target.value)} style={{ height: '32px' }} /></div>
-                <div className="prop-row"><label>Border Color</label><input type="color" value={selectedItem.style.borderColor} onChange={e => updateSelectedStyle("borderColor", e.target.value)} style={{ height: '32px' }} /></div>
+                <div className="prop-row"><label>Text Color</label><input type="color" value={selectedItem.style.color} onChange={e => updateSelectedStyle("color", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                <div className="prop-row"><label>Fill Color</label><input type="color" value={selectedItem.style.backgroundColor} onChange={e => updateSelectedStyle("backgroundColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                <div className="prop-row"><label>Border Color</label><input type="color" value={selectedItem.style.borderColor} onChange={e => updateSelectedStyle("borderColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
                 <div className="prop-row"><label>Border Width</label><input type="number" value={selectedItem.style.borderWidth} onChange={e => updateSelectedStyle("borderWidth", Number(e.target.value))} /></div>
                 <button className="del-btn" onClick={() => { setCurrentDesign(prev => ({ ...prev, items: prev.items.filter(it => it.id !== selectedItemId) })); setSelectedItemId(null); }}>Delete Element</button>
              </div>

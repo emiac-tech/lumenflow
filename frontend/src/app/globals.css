@@ -273,9 +273,9 @@ td {
 }
 
 .thumb {
-  width: 54px;
-  height: 54px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
   object-fit: cover;
   display: block;
   background: rgba(255, 255, 255, 0.04);
@@ -802,5 +802,27 @@ td {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+}
+
+/* ─── Color Picker Inputs ─── */
+input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+input[type="color"]::-moz-color-swatch {
+  border: 1px solid var(--line);
+  border-radius: 4px;
 }
 

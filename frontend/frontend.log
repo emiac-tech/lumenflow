@@ -209,3 +209,143 @@ See this log for the ancestor stack trace.
 
  GET / 200 in 719ms (next.js: 468ms, application-code: 250ms)
  GET /settings 200 in 622ms (next.js: 522ms, application-code: 100ms)
+ GET /settings 200 in 87ms (next.js: 32ms, application-code: 55ms)
+ GET / 200 in 134ms (next.js: 57ms, application-code: 77ms)
+ GET /templates 200 in 162ms (next.js: 136ms, application-code: 26ms)
+⨯ ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed
+
+
+ GET /templates 500 in 457ms (next.js: 159ms, application-code: 298ms)
+ GET / 500 in 442ms (next.js: 156ms, application-code: 286ms)
+⨯ ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed
+
+
+[browser] ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed 
+    at handleErrors (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13828:21)
+    at processMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13891:21)
+    at WebSocket.handleMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13335:52) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13828:21)
+ GET /templates 500 in 79ms (next.js: 34ms, application-code: 46ms)
+[browser] ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed 
+    at handleErrors (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13828:21)
+    at processMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13891:21)
+    at WebSocket.handleMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13335:52) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:13828:21)
+ GET / 500 in 82ms (next.js: 54ms, application-code: 27ms)
+⨯ ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed
+
+
+⨯ ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed
+
+
+ GET / 500 in 34ms (next.js: 14ms, application-code: 20ms)
+ GET /templates 500 in 37ms (next.js: 17ms, application-code: 20ms)
+ GET / 500 in 69ms (next.js: 50ms, application-code: 18ms)
+ GET /templates 500 in 85ms (next.js: 74ms, application-code: 11ms)
+[browser] Uncaught Error: ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed
+
+
+    at <unknown> (Error: ./src/app/templates/page.tsx:484:14)
+    at <unknown> (Error: (./src/app/templates/page.tsx:484:14)
+[browser] Uncaught Error: ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed
+
+
+    at <unknown> (Error: ./src/app/templates/page.tsx:484:14)
+    at <unknown> (Error: (./src/app/templates/page.tsx:484:14)
+[browser] ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed 
+    at handleErrors (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2773:21)
+    at processMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2834:28)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2679:13)
+    at WebSocket.handleMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2324:17) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2773:21)
+[browser] ./src/app/templates/page.tsx:484:14
+Expected '</', got 'jsx text'
+Parsing ecmascript source code failed 
+    at handleErrors (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2773:21)
+    at processMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2834:28)
+    at <unknown> (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2679:13)
+    at WebSocket.handleMessage (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2324:17) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_client_0pe1dg-._.js:2773:21)
+✓ Compiled in 619ms
+ GET /templates 200 in 241ms (next.js: 129ms, application-code: 111ms)
+ GET / 200 in 117ms (next.js: 13ms, application-code: 104ms)
+ GET /templates 200 in 120ms (next.js: 64ms, application-code: 55ms)
+ GET /settings 200 in 114ms (next.js: 72ms, application-code: 42ms)
+ GET / 200 in 10ms (next.js: 2ms, application-code: 8ms)
+ GET /templates 200 in 38ms (next.js: 14ms, application-code: 24ms)
+✓ Compiled in 881ms
+ GET /templates 200 in 118ms (next.js: 26ms, application-code: 92ms)
+✓ Compiled in 219ms
+ GET /templates 200 in 91ms (next.js: 21ms, application-code: 70ms)
+✓ Compiled in 118ms
+ GET /settings 200 in 51ms (next.js: 12ms, application-code: 38ms)
+ GET / 200 in 21ms (next.js: 4ms, application-code: 17ms)
+✓ Compiled in 66ms
+ GET /templates 200 in 97ms (next.js: 55ms, application-code: 41ms)
+ GET / 200 in 75ms (next.js: 38ms, application-code: 37ms)
+ GET /templates 200 in 56ms (next.js: 22ms, application-code: 33ms)
+ GET /settings 200 in 25ms (next.js: 15ms, application-code: 10ms)
+ GET / 200 in 13ms (next.js: 3ms, application-code: 10ms)
+[browser] An empty string ("") was passed to the src attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to src instead of an empty string. 
+    at setProp (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
+    at updateProperties (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:11312:25)
+    at commitUpdate (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:11894:9)
+    at runWithFiberInDEV (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:965:74)
+    at commitHostUpdate (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:7421:13)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8298:100)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8286:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8286:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8286:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8286:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8286:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8286:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8403:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8403:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8219:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8219:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8219:17)
+    at recursivelyTraverseMutationEffects (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8205:106)
+    at commitMutationEffectsOnFiber (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:8214:17) (file:///Users/bhojrajpilaniya/Desktop/lighting project/frontend/.next/dev/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:10746:45)
