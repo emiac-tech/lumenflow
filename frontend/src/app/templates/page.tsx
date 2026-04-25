@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Luminaire } from "@/types/luminaire";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useBrand } from "@/components/BrandContext";
+import { apiFetch } from "@/utils/api";
 
 interface DesignItem {
   id: string;
@@ -61,11 +63,17 @@ const blankStyle = () => ({
   padding: 8,
 });
 
+import Sidebar from "@/components/Sidebar";
+import { useProjects } from "@/components/ProjectContext";
+import { useTemplates } from "@/components/TemplateContext";
+
 export default function PageDesigner() {
+  const { companyName } = useBrand();
+  const { activeProjectId } = useProjects();
+  const { templates, selectedTemplateId, setSelectedTemplateId, refreshTemplates } = useTemplates();
+
   const [items, setItems] = useState<Luminaire[]>([]);
   const [selectedLuminaire, setSelectedLuminaire] = useState<Luminaire | null>(null);
-  const [templates, setTemplates] = useState<any[]>([]);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [templateName, setTemplateName] = useState("Untitled Template");
   const [currentDesign, setCurrentDesign] = useState<DesignJSON>({ items: [] });
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -76,56 +84,65 @@ export default function PageDesigner() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [zoom, setZoom] = useState(1.8);
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
 
   useEffect(() => {
-    fetch("/api/luminaires").then(r => r.json()).then(d => {
+    if (activeProjectId === null) return;
+    apiFetch(`/api/luminaires?project_id=${activeProjectId}`).then(r => r.json()).then(d => {
       setItems(d.items || []);
       if (d.items?.length > 0) setSelectedLuminaire(d.items[0]);
     });
-    fetch("/api/columns").then(r => r.json()).then(d => {
+    apiFetch(`/api/columns?project_id=${activeProjectId}`).then(r => r.json()).then(d => {
       setCustomColumns(d || []);
     });
-    loadTemplates();
     loadExports();
-  }, []);
+  }, [activeProjectId]);
 
-  const loadTemplates = async () => {
-    try {
-      const res = await fetch("/api/templates");
-      const data = await res.json();
-      setTemplates(data.templates || []);
-    } catch (err) { console.error(err); }
-  };
+  // React to sidebar template selection
+  useEffect(() => {
+    if (selectedTemplateId) {
+      loadTemplateById(selectedTemplateId);
+    } else {
+      setTemplateName("Untitled Template");
+      setCurrentDesign({ items: [] });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTemplateId]);
+
 
   const loadExports = async () => {
+    if (activeProjectId === null) return;
     try {
-      const res = await fetch("/api/exports");
+      const res = await apiFetch(`/api/exports?project_id=${activeProjectId}`);
       const data = await res.json();
       setExports(data.items || []);
     } catch (err) { console.error(err); }
   };
 
-  const handleTemplateChange = async (tid: string) => {
-    setSelectedTemplateId(tid);
-    if (!tid) {
-      setTemplateName("Untitled Template");
-      setCurrentDesign({ items: [] });
-      return;
-    }
+  const loadTemplateById = async (tid: string) => {
+    setIsLoadingTemplate(true);
     try {
-      const res = await fetch(`/api/templates/${tid}`);
-      if (!res.ok) {
-          console.error("Failed to load template", res.status);
-          alert("Error: Template could not be loaded.");
-          return;
-      }
+      const res = await apiFetch(`/api/templates/${tid}?project_id=${activeProjectId}`);
+      if (!res.ok) { console.error("Failed to load template", res.status); return; }
       const data = await res.json();
       if (data && data.template) {
         setTemplateName(data.template.name);
         setCurrentDesign(data.template.designJson || { items: [] });
       }
     } catch (err) { console.error(err); }
+    finally { setIsLoadingTemplate(false); }
   };
+
+  const handleTemplateChange = async (tid: string) => {
+    setSelectedTemplateId(tid); // updates context — sidebar will highlight it
+    if (!tid) {
+      setTemplateName("Untitled Template");
+      setCurrentDesign({ items: [] });
+      return;
+    }
+    await loadTemplateById(tid);
+  };
+
 
   const addItem = (type: string, extra: any = {}) => {
     const item: DesignItem = {
@@ -138,7 +155,7 @@ export default function PageDesigner() {
       x: extra.dropX ?? 60,
       y: extra.dropY ?? 60,
       width: type === "image" ? 180 : 220,
-      height: type === "shape" ? 40 : 60,
+      height: type === "shape" ? 80 : 60,
       style: blankStyle(),
     };
     if (type === "image") {
@@ -146,10 +163,19 @@ export default function PageDesigner() {
       item.style.backgroundColor = "#ffffff";
     }
     if (type === "shape") {
-        item.style.borderWidth = 1;
-        item.style.borderColor = "#ffffff";
-        item.style.backgroundColor = "transparent";
-        item.text = "";
+      item.style.borderWidth = 1;
+      item.style.borderColor = "#000000";
+      item.style.backgroundColor = "transparent";
+      item.style.padding = 0;
+      item.text = "";
+    }
+    if (type === "line") {
+      item.width = extra.vertical ? 2 : (extra.fullWidth ? 475 : 200);
+      item.height = extra.vertical ? 200 : 2;
+      item.style.backgroundColor = "#000000";
+      item.style.borderWidth = 0;
+      item.style.padding = 0;
+      item.text = "";
     }
     setCurrentDesign(prev => ({ ...prev, items: [...prev.items, item] }));
     setSelectedItemId(item.id);
@@ -161,13 +187,14 @@ export default function PageDesigner() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch(`/api/luminaires/0/designer-assets`, { method: "POST", body: formData });
+      const res = await apiFetch(`/api/luminaires/0/designer-assets?project_id=${activeProjectId}`, { method: "POST", body: formData });
       const data = await res.json();
       if (res.ok) setCustomImages(prev => [...prev, { fileName: data.fileName, imageUrl: data.imageUrl }]);
     } catch (err) { console.error(err); }
   };
 
   const handleSave = async () => {
+    if (activeProjectId === null) return;
     try {
       const payload = {
         name: templateName,
@@ -175,19 +202,20 @@ export default function PageDesigner() {
         pageWidth: 595,
         pageHeight: 842,
         designJson: currentDesign,
-        luminaireId: selectedLuminaire?.id
+        luminaireId: selectedLuminaire?.id,
+        project_id: activeProjectId
       };
       const method = selectedTemplateId ? "PUT" : "POST";
-      const url = selectedTemplateId ? `/api/templates/${selectedTemplateId}` : "/api/templates";
-      const res = await fetch(url, {
+      const url = selectedTemplateId ? `/api/templates/${selectedTemplateId}?project_id=${activeProjectId}` : `/api/templates?project_id=${activeProjectId}`;
+      const res = await apiFetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (res.ok) {
         const data = await res.json();
-        if (!selectedTemplateId) setSelectedTemplateId(data.template.id);
-        loadTemplates();
+        if (!selectedTemplateId) setSelectedTemplateId(data.template.id.toString());
+        refreshTemplates();
         setShowToast(true);
         setTimeout(() => setShowToast(false), 3000);
       }
@@ -200,26 +228,26 @@ export default function PageDesigner() {
   };
 
   const handleDelete = async () => {
-    if (!selectedTemplateId) return;
+    if (!selectedTemplateId || activeProjectId === null) return;
     try {
-      const res = await fetch(`/api/templates/${selectedTemplateId}`, { method: "DELETE" });
+      const res = await apiFetch(`/api/templates/${selectedTemplateId}?project_id=${activeProjectId}`, { method: "DELETE" });
       if (res.ok) {
         setSelectedTemplateId("");
         setTemplateName("Untitled Template");
         setCurrentDesign({ items: [] });
-        loadTemplates();
+        refreshTemplates();
         setShowDeleteModal(false);
       }
     } catch (err) { console.error(err); }
   };
 
   const handleExport = async () => {
-    if (!selectedLuminaire || !selectedTemplateId) {
+    if (!selectedLuminaire || !selectedTemplateId || activeProjectId === null) {
       alert("Please select a luminaire and a saved template first.");
       return;
     }
     try {
-      const res = await fetch(`/api/luminaires/${selectedLuminaire.id}/templates/${selectedTemplateId}/export`, { method: "POST" });
+      const res = await apiFetch(`/api/luminaires/${selectedLuminaire.id}/templates/${selectedTemplateId}/export?project_id=${activeProjectId}`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
         window.open(data.document.fileUrl, "_blank");
@@ -247,18 +275,7 @@ export default function PageDesigner() {
 
   return (
     <div className="shell">
-      {/* ── Main Navigation Sidebar ── */}
-      <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className="brand">LumenFlow</div>
-        <nav className="nav">
-          <Link href="/" className="nav-item">Database</Link>
-          <Link href="/templates" className="nav-item active">Template Builder</Link>
-          <Link href="/settings" className="nav-item">Configuration</Link>
-        </nav>
-        <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'center' }}>
-          <ThemeToggle />
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* ── Main Content Area ── */}
       <main className="main" style={{ flexDirection: "row", padding: 0 }}>
@@ -304,6 +321,9 @@ export default function PageDesigner() {
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "text", extra: { text: "Static Text" } }))} className="designer-pill-btn" onClick={() => addItem("text", { text: "Static Text" })}>Add text block</button>
               <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "shape" }))} className="designer-pill-btn" onClick={() => addItem("shape")}>Add border block</button>
+              <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "line" }))} className="designer-pill-btn" onClick={() => addItem("line")}>Add horizontal line</button>
+              <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "line", extra: { vertical: true } }))} className="designer-pill-btn" onClick={() => addItem("line", { vertical: true })}>Add vertical line</button>
+              <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "line", extra: { fullWidth: true } }))} className="designer-pill-btn" onClick={() => addItem("line", { fullWidth: true })}>Add break line</button>
               <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "image", extra: { bindingKey: "productImageUrl" } }))} className="designer-pill-btn" onClick={() => addItem("image", { bindingKey: "productImageUrl" })}>Add product image</button>
               <button draggable onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "image", extra: { bindingKey: "diagramImageUrl" } }))} className="designer-pill-btn" onClick={() => addItem("image", { bindingKey: "diagramImageUrl" })}>Add diagram image</button>
             </div>
@@ -395,10 +415,23 @@ export default function PageDesigner() {
                         updateSelectedItem("x", ((e.clientX - rect.left) / zoom) - dragState.startX);
                         updateSelectedItem("y", ((e.clientY - rect.top) / zoom) - dragState.startY);
                       } else if (dragState.mode === "resize" && dragState.startWidth && dragState.startHeight) {
-                        const newWidth = Math.max(20, dragState.startWidth + ((e.clientX - dragState.startX) / zoom));
-                        const newHeight = Math.max(20, dragState.startHeight + ((e.clientY - dragState.startY) / zoom));
-                        updateSelectedItem("width", newWidth);
-                        updateSelectedItem("height", newHeight);
+                        if (selectedItem.type === "line") {
+                          // For lines, only resize the LENGTH dimension
+                          if (selectedItem.width >= selectedItem.height) {
+                            // Horizontal line — drag right/left changes width (length)
+                            const newWidth = Math.max(5, dragState.startWidth + ((e.clientX - dragState.startX) / zoom));
+                            updateSelectedItem("width", newWidth);
+                          } else {
+                            // Vertical line — drag up/down changes height (length)
+                            const newHeight = Math.max(5, dragState.startHeight + ((e.clientY - dragState.startY) / zoom));
+                            updateSelectedItem("height", newHeight);
+                          }
+                        } else {
+                          const newWidth = Math.max(20, dragState.startWidth + ((e.clientX - dragState.startX) / zoom));
+                          const newHeight = Math.max(20, dragState.startHeight + ((e.clientY - dragState.startY) / zoom));
+                          updateSelectedItem("width", newWidth);
+                          updateSelectedItem("height", newHeight);
+                        }
                       }
                     }
                   }}
@@ -414,6 +447,7 @@ export default function PageDesigner() {
                       content = val || customVal || `[${item.label}]`;
                     }
                     const isImage = item.type === "image";
+                    const isLine = item.type === "line";
                     const url = item.imageUrl || (selectedLuminaire && (selectedLuminaire as any)[item.bindingKey]);
 
                     return (
@@ -427,13 +461,16 @@ export default function PageDesigner() {
                         }}
                         style={{
                           position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height,
-                          fontSize: item.style.fontSize, color: item.style.color, backgroundColor: item.style.backgroundColor,
-                          border: isSelected ? "2px solid var(--accent)" : (item.style.borderWidth > 0 ? `${item.style.borderWidth}px solid ${item.style.borderColor}` : "none"),
-                          padding: item.style.padding, fontWeight: item.style.fontWeight, cursor: "move", display: "flex", overflow: "visible", boxSizing: 'border-box'
+                          fontSize: item.style.fontSize, color: item.style.color,
+                          backgroundColor: isLine ? item.style.backgroundColor : item.style.backgroundColor,
+                          border: isSelected ? "2px solid #2d8cff" : (item.style.borderWidth > 0 ? `${item.style.borderWidth}px solid ${item.style.borderColor}` : "none"),
+                          padding: isLine ? 0 : item.style.padding,
+                          fontWeight: item.style.fontWeight, cursor: "move", display: "flex", overflow: "visible", boxSizing: 'border-box',
+                          userSelect: 'none', ...({"WebkitUserDrag": "none"} as React.CSSProperties),
                         }}
                       >
                         <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
-                            {isImage && url ? <img src={url} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="item" /> : content}
+                            {isLine ? null : isImage && url ? <img src={url} draggable={false} onDragStart={e => e.preventDefault()} style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none', pointerEvents: 'none' }} alt="item" /> : content}
                         </div>
                         {isSelected && (
                           <div 
@@ -442,7 +479,15 @@ export default function PageDesigner() {
                               setDragState({ mode: "resize", itemId: item.id, startX: e.clientX, startY: e.clientY, startWidth: item.width, startHeight: item.height });
                             }}
                             style={{
-                              position: 'absolute', bottom: '-4px', right: '-4px', width: '12px', height: '12px', background: 'var(--accent)', border: '2px solid #fff', cursor: 'nwse-resize', zIndex: 10, borderRadius: '50%'
+                              position: 'absolute', width: '12px', height: '12px',
+                              background: 'var(--accent)', border: '2px solid #fff', zIndex: 10, borderRadius: '50%',
+                              // Position at the END of the line (right for horizontal, bottom for vertical)
+                              ...(isLine
+                                ? (item.width >= item.height
+                                  ? { right: '-6px', top: '50%', transform: 'translateY(-50%)', cursor: 'ew-resize' }   // horizontal
+                                  : { bottom: '-6px', left: '50%', transform: 'translateX(-50%)', cursor: 'ns-resize' } // vertical
+                                )
+                                : { bottom: '-4px', right: '-4px', cursor: 'nwse-resize' })
                             }}
                           />
                         )}
@@ -459,24 +504,55 @@ export default function PageDesigner() {
            <h3 style={{ fontSize: "15px", fontWeight: 700, marginBottom: "20px" }}>Item Properties</h3>
            {selectedItem ? (
              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="prop-row"><label>Type</label><span style={{ textTransform: 'capitalize' }}>{selectedItem.type}</span></div>
+                <div className="prop-row"><label>Type</label><span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{selectedItem.type === 'line' ? 'Line / Divider' : selectedItem.type === 'shape' ? 'Border Block' : selectedItem.type}</span></div>
+
                 {selectedItem.type === "text" && (
                   <div className="prop-row">
                     <label>Content</label>
                     <textarea value={selectedItem.text} onChange={e => updateSelectedItem("text", e.target.value)} style={{ height: '60px', width: '100%', background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: '4px', padding: '8px', color: 'var(--text)' }} />
                   </div>
                 )}
+
+                {/* Position & Size */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <div className="prop-row"><label>X</label><input type="number" value={Math.round(selectedItem.x)} onChange={e => updateSelectedItem("x", Number(e.target.value))} /></div>
                   <div className="prop-row"><label>Y</label><input type="number" value={Math.round(selectedItem.y)} onChange={e => updateSelectedItem("y", Number(e.target.value))} /></div>
-                  <div className="prop-row"><label>Width</label><input type="number" value={Math.round(selectedItem.width)} onChange={e => updateSelectedItem("width", Number(e.target.value))} /></div>
-                  <div className="prop-row"><label>Height</label><input type="number" value={Math.round(selectedItem.height)} onChange={e => updateSelectedItem("height", Number(e.target.value))} /></div>
+                  {selectedItem.type === 'line' ? (
+                    <>
+                      <div className="prop-row"><label>{selectedItem.width <= selectedItem.height ? 'Thickness' : 'Length'}</label><input type="number" step="0.1" min="0.5" value={selectedItem.width <= selectedItem.height ? Number(selectedItem.width.toFixed(1)) : Math.round(selectedItem.width)} onChange={e => updateSelectedItem("width", Number(e.target.value))} /></div>
+                      <div className="prop-row"><label>{selectedItem.height <= selectedItem.width ? 'Thickness' : 'Length'}</label><input type="number" step="0.1" min="0.5" value={selectedItem.height <= selectedItem.width ? Number(selectedItem.height.toFixed(1)) : Math.round(selectedItem.height)} onChange={e => updateSelectedItem("height", Number(e.target.value))} /></div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="prop-row"><label>Width</label><input type="number" value={Math.round(selectedItem.width)} onChange={e => updateSelectedItem("width", Number(e.target.value))} /></div>
+                      <div className="prop-row"><label>Height</label><input type="number" value={Math.round(selectedItem.height)} onChange={e => updateSelectedItem("height", Number(e.target.value))} /></div>
+                    </>
+                  )}
                 </div>
-                <div className="prop-row"><label>Font Size</label><input type="number" value={selectedItem.style.fontSize} onChange={e => updateSelectedStyle("fontSize", Number(e.target.value))} /></div>
-                <div className="prop-row"><label>Text Color</label><input type="color" value={selectedItem.style.color} onChange={e => updateSelectedStyle("color", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
-                <div className="prop-row"><label>Fill Color</label><input type="color" value={selectedItem.style.backgroundColor} onChange={e => updateSelectedStyle("backgroundColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
-                <div className="prop-row"><label>Border Color</label><input type="color" value={selectedItem.style.borderColor} onChange={e => updateSelectedStyle("borderColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
-                <div className="prop-row"><label>Border Width</label><input type="number" value={selectedItem.style.borderWidth} onChange={e => updateSelectedStyle("borderWidth", Number(e.target.value))} /></div>
+
+                {/* Font & text controls — only for field/text */}
+                {(selectedItem.type === 'field' || selectedItem.type === 'text') && (
+                  <>
+                    <div className="prop-row"><label>Font Size</label><input type="number" value={selectedItem.style.fontSize} onChange={e => updateSelectedStyle("fontSize", Number(e.target.value))} /></div>
+                    <div className="prop-row"><label>Text Color</label><input type="color" value={selectedItem.style.color || '#111827'} onChange={e => updateSelectedStyle("color", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                    <div className="prop-row"><label>Fill Color</label><input type="color" value={selectedItem.style.backgroundColor === 'transparent' ? '#ffffff' : (selectedItem.style.backgroundColor || '#ffffff')} onChange={e => updateSelectedStyle("backgroundColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                  </>
+                )}
+
+                {/* Line color — only for line type */}
+                {selectedItem.type === 'line' && (
+                  <div className="prop-row"><label>Line Color</label><input type="color" value={selectedItem.style.backgroundColor === 'transparent' ? '#000000' : (selectedItem.style.backgroundColor || '#000000')} onChange={e => updateSelectedStyle("backgroundColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                )}
+
+                {/* Border controls — only for shape (border block) */}
+                {selectedItem.type === 'shape' && (
+                  <>
+                    <div className="prop-row"><label>Fill Color</label><input type="color" value={selectedItem.style.backgroundColor === 'transparent' ? '#ffffff' : (selectedItem.style.backgroundColor || '#ffffff')} onChange={e => updateSelectedStyle("backgroundColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                    <div className="prop-row"><label>Border Color</label><input type="color" value={selectedItem.style.borderColor || '#000000'} onChange={e => updateSelectedStyle("borderColor", e.target.value)} style={{ height: '44px', width: '100%', padding: '0', border: 'none', borderRadius: '4px', cursor: 'pointer' }} /></div>
+                    <div className="prop-row"><label>Border Width</label><input type="number" step="0.1" min="0.5" max="20" value={Number(selectedItem.style.borderWidth.toFixed(1))} onChange={e => updateSelectedStyle("borderWidth", Math.max(0.5, Number(e.target.value)))} /></div>
+                  </>
+                )}
+
                 <button className="del-btn" onClick={() => { setCurrentDesign(prev => ({ ...prev, items: prev.items.filter(it => it.id !== selectedItemId) })); setSelectedItemId(null); }}>Delete Element</button>
              </div>
            ) : <p style={{ color: 'var(--muted)', fontSize: '13px', textAlign: 'center', marginTop: '40px' }}>Select an element on canvas.</p>}
@@ -552,7 +628,8 @@ export default function PageDesigner() {
         .asset-thumb { height: 60px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; cursor: pointer; background: var(--bg); }
         .asset-thumb img { width: 100%; height: 100%; object-fit: contain; }
         .prop-row label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-        .prop-row input { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; color: var(--text); padding: 8px; font-size: 13px; }
+        .prop-row input:not([type="color"]) { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; color: var(--text); padding: 8px; font-size: 13px; }
+        .prop-row input[type="color"] { width: 100%; height: 44px; padding: 3px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; background: none; }
         .del-btn { margin-top: 10px; background: rgba(218, 54, 51, 0.1); color: #f85149; border: 1px solid rgba(218, 54, 51, 0.4); padding: 10px; border-radius: 4px; font-size: 13px; cursor: pointer; transition: 0.2s; }
         .del-btn:hover { background: #da3633; color: #fff; }
       `}</style>

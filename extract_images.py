@@ -68,17 +68,31 @@ def extract_candidate_images(pdf_document: fitz.Document, temp_dir: Path) -> lis
     return candidate_paths
 
 
-def build_llm_payload(candidate_paths: list[str], pdf_text: str) -> list[dict]:
+def build_llm_payload(candidate_paths: list[str], pdf_text: str, custom_columns: list[dict] | None = None) -> list[dict]:
+    custom_columns = custom_columns or []
+    custom_instruction = ""
+    if custom_columns:
+        serialized = json.dumps(custom_columns, ensure_ascii=True)
+        custom_instruction = (
+            ' Also return a "custom_fields" object keyed by custom column name. '
+            "Only include the custom columns provided below, and use empty strings when unknown. "
+            f"Custom AI-enabled columns: {serialized}."
+        )
+
     content = [
         {
             "type": "text",
             "text": (
                 "You are extracting luminaire schedule details from a PDF. "
-                "Choose one best product image and one best diagram image from the candidates. "
-                "Then extract the luminaire metadata from the PDF text. "
+                "Identify up to three images from the candidates: "
+                "(1) the best product photo showing the physical luminaire, "
+                "(2) the best technical/dimension drawing showing measurements, "
+                "(3) the polar curve / photometric distribution diagram (a semicircular spider-web chart showing light intensity distribution in candela, typically labelled with degree angles like 0° 30° 60° 90° and candela values like Imax). "
+                "Then extract luminaire metadata from the PDF text. "
                 "Return strict JSON with this shape only: "
-                '{"product_image_filename":"","diagram_image_filename":"","metadata":{"type":"","manufacturer":"","product":"","spec_code":"","description":"","colour":"","cct":"","cri":"","unit_watts":"","dimming":"","quantity":"","ip_rating":"","total_watts":""}}. '
-                "Use empty strings when a field is missing. Prefer concise field values."
+                '{"product_image_filename":"","diagram_image_filename":"","polar_image_filename":"","metadata":{"type":"","manufacturer":"","product":"","spec_code":"","description":"","colour":"","cct":"","cri":"","unit_watts":"","dimming":"","quantity":"","ip_rating":"","total_watts":""},"custom_fields":{}}. '
+                f"{custom_instruction}"
+                "Use empty strings when a field or image is missing. Prefer concise field values."
             ),
         },
         {
@@ -105,19 +119,20 @@ def build_llm_payload(candidate_paths: list[str], pdf_text: str) -> list[dict]:
     return content
 
 
-def extract_with_llm(candidate_paths: list[str], pdf_text: str, api_key: str) -> dict:
+def extract_with_llm(candidate_paths: list[str], pdf_text: str, api_key: str, custom_columns: list[dict] | None = None) -> dict:
     if not api_key:
         raise ValueError("OpenAI API key is required for document processing.")
 
     client = OpenAI(api_key=api_key)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "user", "content": build_llm_payload(candidate_paths, pdf_text)}],
+        messages=[{"role": "user", "content": build_llm_payload(candidate_paths, pdf_text, custom_columns=custom_columns)}],
         max_tokens=700,
     )
     raw_text = response.choices[0].message.content or "{}"
     parsed = safe_json_loads(raw_text)
     parsed.setdefault("metadata", {})
+    parsed.setdefault("custom_fields", {})
     return parsed
 
 
@@ -140,7 +155,12 @@ def match_candidate(candidate_paths: list[str], chosen_filename: str | None) -> 
     return None
 
 
-def process_luminaire_document(pdf_path: str, api_key: str, keep_temp: bool = False) -> dict:
+def process_luminaire_document(
+    pdf_path: str,
+    api_key: str,
+    keep_temp: bool = False,
+    custom_columns: list[dict] | None = None,
+) -> dict:
     pdf_document = fitz.open(pdf_path)
     pdf_text = extract_pdf_text(pdf_document)
     work_dir = TEMP_ROOT / uuid.uuid4().hex
@@ -151,15 +171,16 @@ def process_luminaire_document(pdf_path: str, api_key: str, keep_temp: bool = Fa
     finally:
         pdf_document.close()
 
-    llm_result = {"metadata": {}}
+    llm_result = {"metadata": {}, "custom_fields": {}}
     if candidate_paths or pdf_text:
-        llm_result = extract_with_llm(candidate_paths, pdf_text, api_key=api_key)
+        llm_result = extract_with_llm(candidate_paths, pdf_text, api_key=api_key, custom_columns=custom_columns)
 
     fallback_product, fallback_diagram = choose_fallback_images(candidate_paths)
     product_image = match_candidate(candidate_paths, llm_result.get("product_image_filename")) or fallback_product
     diagram_image = match_candidate(candidate_paths, llm_result.get("diagram_image_filename")) or fallback_diagram
+    polar_image = match_candidate(candidate_paths, llm_result.get("polar_image_filename"))
 
-    preserved_paths = {path for path in [product_image, diagram_image] if path}
+    preserved_paths = {path for path in [product_image, diagram_image, polar_image] if path}
     if not keep_temp:
         for candidate in candidate_paths:
             if candidate not in preserved_paths and os.path.exists(candidate):
@@ -167,8 +188,10 @@ def process_luminaire_document(pdf_path: str, api_key: str, keep_temp: bool = Fa
 
     result = {
         "metadata": llm_result.get("metadata", {}),
+        "custom_fields": llm_result.get("custom_fields", {}) or {},
         "product_image_path": product_image,
         "diagram_image_path": diagram_image,
+        "polar_image_path": polar_image,
     }
 
     if keep_temp:

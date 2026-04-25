@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Luminaire } from "@/types/luminaire";
+import { apiFetch } from "@/utils/api";
 
 interface EditLuminaireModalProps {
   item: Luminaire | null;
@@ -58,7 +59,7 @@ export default function EditLuminaireModal({
     if (!item) return;
     setSaving(true);
     try {
-      await fetch(`/api/luminaires/${item.id}`, {
+      await apiFetch(`/api/luminaires/${item.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(fields),

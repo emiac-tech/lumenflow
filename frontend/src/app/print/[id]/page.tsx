@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Luminaire, CustomColumn } from "@/types/luminaire";
+import { apiFetch } from "@/utils/api";
 
 export default function PrintPage() {
   const params = useParams();
@@ -16,8 +17,8 @@ export default function PrintPage() {
   useEffect(() => {
     if (!id) return;
     Promise.all([
-      fetch(`/api/luminaires/${id}`).then(r => r.json()),
-      fetch(`/api/columns`).then(r => r.json()),
+      apiFetch(`/api/luminaires/${id}`).then(r => r.json()),
+      apiFetch(`/api/columns`).then(r => r.json()),
     ]).then(([lumData, colData]) => {
       setData(lumData);
       setCols(colData);

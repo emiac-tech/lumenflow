@@ -1,6 +1,8 @@
 export interface CustomColumn {
   id: number;
   name: string;
+  aiEnabled: boolean;
+  aiDescription: string;
 }
 
 export interface Luminaire {
@@ -24,6 +26,7 @@ export interface Luminaire {
   totalWatts: string | null;
   diagramImageUrl: string | null;
   productImageUrl: string | null;
+  polarImageUrl: string | null;
   customData?: Record<string, string>;
   pdfTemplate?: string | null;
 }

@@ -2,6 +2,8 @@
 
 import React, { useState, useRef } from "react";
 import { ImportResponse, Luminaire } from "@/types/luminaire";
+import { apiFetch } from "@/utils/api";
+import { useAuth } from "./AuthContext";
 
 type ModalState = "upload" | "processing" | "edit";
 
@@ -9,6 +11,7 @@ interface AddLuminaireModalProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: () => void;
+  project_id: number | null;
 }
 
 const EMPTY_FIELDS = {
@@ -31,7 +34,9 @@ export default function AddLuminaireModal({
   isOpen,
   onClose,
   onComplete,
+  project_id,
 }: AddLuminaireModalProps) {
+  const { user, refreshUser } = useAuth();
   const [state, setState] = useState<ModalState>("upload");
   const [urlText, setUrlText] = useState("");
   const [error, setError] = useState("");
@@ -43,6 +48,7 @@ export default function AddLuminaireModal({
   const [editFields, setEditFields] = useState(EMPTY_FIELDS);
   const [editProductImg, setEditProductImg] = useState<string | null>(null);
   const [editDiagramImg, setEditDiagramImg] = useState<string | null>(null);
+  const [editPolarImg, setEditPolarImg] = useState<string | null>(null);
 
   function resetToUpload() {
     setState("upload");
@@ -57,6 +63,7 @@ export default function AddLuminaireModal({
     setState("edit");
     setEditProductImg(item.productImageUrl);
     setEditDiagramImg(item.diagramImageUrl);
+    setEditPolarImg(item.polarImageUrl ?? null);
     setEditFields({
       manufacturer: item.manufacturer || "",
       product: item.product || "",
@@ -77,6 +84,20 @@ export default function AddLuminaireModal({
   async function handleSubmitUpload(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    // Count how many items are being submitted
+    const fileCount = fileRef.current?.files?.length ?? 0;
+    const urlCount = urlText.split("\n").map(u => u.trim()).filter(Boolean).length;
+    const totalItems = fileCount + urlCount;
+
+    // Client-side token guard for non-admin users
+    if (user?.role === "client" && (user?.tokens ?? 0) < totalItems) {
+      setError(
+        `Insufficient credits. You have ${user?.tokens ?? 0} credit(s) but are trying to import ${totalItems} PDF(s). Please reduce the number of imports or contact your administrator.`
+      );
+      return;
+    }
+
     setState("processing");
 
     const formData = new FormData();
@@ -92,12 +113,15 @@ export default function AddLuminaireModal({
     formData.append("urls", JSON.stringify(urls));
 
     try {
-      const res = await fetch("/api/luminaires/import", {
+      const res = await apiFetch(`/api/luminaires/import?project_id=${project_id}`, {
         method: "POST",
         body: formData,
       });
       const data: ImportResponse = await res.json();
       if (!res.ok) throw new Error((data as { detail?: string }).detail || "Upload failed.");
+
+      // Refresh token count in sidebar after successful import
+      await refreshUser();
 
       if (data.created.length > 0) {
         setEditQueue(data.created);
@@ -121,7 +145,7 @@ export default function AddLuminaireModal({
     const item = editQueue[currentIndex];
 
     try {
-      await fetch(`/api/luminaires/${item.id}`, {
+      await apiFetch(`/api/luminaires/${item.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editFields),
@@ -180,6 +204,20 @@ export default function AddLuminaireModal({
                 Upload 1 to 20 PDFs, paste direct PDF URLs, or mix both in the
                 same batch.
               </p>
+              {/* Credits badge — only for client users */}
+              {user?.role === "client" && (
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  marginTop: 10, padding: "6px 12px", borderRadius: 20,
+                  background: (user?.tokens ?? 0) === 0 ? "rgba(255,92,92,0.10)" : "rgba(61,216,163,0.10)",
+                  border: `1px solid ${(user?.tokens ?? 0) === 0 ? "rgba(255,92,92,0.25)" : "rgba(61,216,163,0.25)"}`,
+                  fontSize: 12, fontWeight: 700,
+                  color: (user?.tokens ?? 0) === 0 ? "var(--danger)" : "var(--success, #3dd8a3)",
+                }}>
+                  🪙 {user?.tokens ?? 0} credits remaining
+                  {(user?.tokens ?? 0) === 0 && " — Contact admin to top up"}
+                </div>
+              )}
             </div>
             <form className="modal-form" onSubmit={handleSubmitUpload}>
 
@@ -190,8 +228,9 @@ export default function AddLuminaireModal({
                   type="file"
                   accept="application/pdf"
                   multiple
+                  disabled={user?.role === "client" && (user?.tokens ?? 0) === 0}
                 />
-                <small>Use Ctrl/Cmd select for multiple files.</small>
+                <small>Use Ctrl/Cmd select for multiple files. Each PDF costs 1 credit.</small>
               </label>
               <label className="field">
                 <span>PDF URLs</span>
@@ -200,15 +239,20 @@ export default function AddLuminaireModal({
                   placeholder="One PDF URL per line"
                   value={urlText}
                   onChange={(e) => setUrlText(e.target.value)}
+                  disabled={user?.role === "client" && (user?.tokens ?? 0) === 0}
                 />
-                <small>Paste up to 20 direct PDF URLs.</small>
+                <small>Paste up to 20 direct PDF URLs. Each URL costs 1 credit.</small>
               </label>
               {error && <p className="feedback-error">{error}</p>}
               <div className="actions">
                 <button type="button" className="ghost-button" onClick={handleClose}>
                   Cancel
                 </button>
-                <button type="submit" className="primary-button">
+                <button
+                  type="submit"
+                  className="primary-button"
+                  disabled={user?.role === "client" && (user?.tokens ?? 0) === 0}
+                >
                   Process Documents
                 </button>
               </div>
@@ -254,6 +298,19 @@ export default function AddLuminaireModal({
                   />
                 ) : (
                   <div className="edit-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--muted)', fontSize: '12px', border: '1px dashed var(--line)' }}>No Diagram</div>
+                )}
+              </div>
+              <div className="edit-img-box">
+                <p className="eyebrow">Polar Curve</p>
+                {editPolarImg ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={editPolarImg}
+                    alt="Polar Curve"
+                    className="edit-img"
+                  />
+                ) : (
+                  <div className="edit-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--muted)', fontSize: '12px', border: '1px dashed var(--line)' }}>No Polar Curve</div>
                 )}
               </div>
               <label className="field edit-desc">
