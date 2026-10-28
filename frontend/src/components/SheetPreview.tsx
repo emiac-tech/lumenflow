@@ -1,3 +1,4 @@
+import { withBase } from "@/utils/basePath";
 import React from "react";
 
 export interface SheetPreviewProps {
@@ -28,7 +29,7 @@ export default function SheetPreview(p: SheetPreviewProps) {
     <div className={`rise-sheet ${p.compact ? "compact" : ""}`} style={{ borderTopColor: p.accent }}>
       {p.logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img className="rise-sheet-logo" src={p.logoUrl} alt="Studio logo" />
+        <img className="rise-sheet-logo" src={withBase(p.logoUrl)} alt="Studio logo" />
       ) : (
         <div className="rise-sheet-brand">{p.studioName || "Your studio"}</div>
       )}

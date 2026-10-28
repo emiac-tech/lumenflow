@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -162,7 +163,7 @@ export default function SettingsPage() {
               <div className="field">
                 <span>Project Logo</span>
                 <div style={{ height: 86, border: "1px solid var(--line)", borderRadius: 8, background: "white", display: "flex", alignItems: "center", justifyContent: "center", padding: 8, marginBottom: 8 }}>
-                  {logoUrl ? <img src={logoUrl} alt="Project logo" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} /> : <small>No logo configured</small>}
+                  {logoUrl ? <img src={withBase(logoUrl)} alt="Project logo" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} /> : <small>No logo configured</small>}
                 </div>
                 <label className="ghost-button" style={{ cursor: "pointer", textAlign: "center" }}>
                   {uploadingLogo ? "Uploading..." : "Upload Logo"}

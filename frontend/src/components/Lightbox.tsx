@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Crop, ImageUp } from "lucide-react";
@@ -67,7 +68,7 @@ export default function Lightbox({ imageUrl, onClose, title, onReplace }: Lightb
         <button className="close-button lightbox-close" onClick={onClose} disabled={busy} aria-label="Close">✕</button>
         <div className="lightbox-stack" onClick={(e) => e.stopPropagation()}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={current} alt={title || "Preview"} className="lightbox-img" />
+          <img src={withBase(current)} alt={title || "Preview"} className="lightbox-img" />
           {onReplace && (
             <div className="lightbox-toolbar">
               {title && <span className="lightbox-title">{title}</span>}

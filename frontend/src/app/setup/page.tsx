@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -167,7 +168,7 @@ export default function SetupPage() {
               <div className="rise-logo-row">
                 {previewLogo && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={previewLogo} alt="Studio logo" />
+                  <img src={withBase(previewLogo)} alt="Studio logo" />
                 )}
                 <input type="file" accept="image/png,image/jpeg" onChange={onLogoChange} aria-label="Studio logo" />
                 {(studio?.logoUrl || draftLogoFile) && !removeLogo && (

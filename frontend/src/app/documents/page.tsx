@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
@@ -142,7 +143,7 @@ export default function DocumentsPage() {
                   <td>{d.revision || d.projectRevision || "—"}</td>
                   <td>{parseServerDate(d.createdAt) ? parseServerDate(d.createdAt)!.toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
                   <td style={{ textAlign: "right" }}>
-                    <a className="rise-link" href={d.fileUrl} target="_blank" rel="noopener noreferrer">
+                    <a className="rise-link" href={withBase(d.fileUrl)} target="_blank" rel="noopener noreferrer">
                       {d.type === "schedule" ? (d.fileUrl.endsWith(".xlsx") ? "Download Excel ↓" : "Download PDF ↓") : "Preview sheet ↗"}
                     </a>
                   </td>

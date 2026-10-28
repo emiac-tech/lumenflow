@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -77,7 +78,7 @@ export default function HomePage() {
           <div className="rise-studio-mark" aria-hidden>
             {studio?.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={studio.logoUrl} alt="" />
+              <img src={withBase(studio.logoUrl)} alt="" />
             ) : (
               studioName.charAt(0).toUpperCase()
             )}

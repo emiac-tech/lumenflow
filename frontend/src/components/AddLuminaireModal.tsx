@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useRef, useState } from "react";
 import ImageCropDialog from "@/components/ImageCropDialog";
 import { useAuth } from "@/components/AuthContext";
@@ -490,7 +491,7 @@ export default function AddLuminaireModal({
         >
           {hasImage ? (
             /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={imageUrl || ""} alt={label} className="edit-img" />
+            <img src={withBase(imageUrl || "")} alt={label} className="edit-img" />
           ) : (
             <div className="edit-img edit-img-empty">Upload {label}</div>
           )}

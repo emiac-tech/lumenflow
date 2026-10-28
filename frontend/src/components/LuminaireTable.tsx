@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useState, useEffect, useRef } from "react";
 import { Luminaire, CustomColumn } from "@/types/luminaire";
 import Lightbox from "./Lightbox";
@@ -515,7 +516,7 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
       const res = await apiFetch(`/api/luminaires/${item.id}/templates/${tid}/export?project_id=${activeProjectId}`, { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        window.open(data.document.fileUrl, "_blank");
+        window.open(withBase(data.document.fileUrl), "_blank");
         refreshUser();
       } else {
         alert(data.detail || "Export failed");
@@ -540,7 +541,7 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minHeight: "54px", paddingLeft: "8px" }}>
             {local.productImageUrl ? (
-              <img src={local.productImageUrl} alt="product" className="thumb" onClick={() => local.productImageUrl && setLightbox({ field: "productImageUrl", url: local.productImageUrl })} />
+              <img src={withBase(local.productImageUrl)} alt="product" className="thumb" onClick={() => local.productImageUrl && setLightbox({ field: "productImageUrl", url: local.productImageUrl })} />
             ) : <span className="muted">—</span>}
             <label className="upload-overlay" title="Upload Photo"><Upload size={14} /><input type="file" hidden accept="image/*" onChange={(e) => handleImageUpload(e, "productImageUrl")} /></label>
           </div>
@@ -549,7 +550,7 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minHeight: "54px", paddingLeft: "8px" }}>
             {local.diagramImageUrl ? (
-              <img src={local.diagramImageUrl} alt="diagram" className="thumb" onClick={() => local.diagramImageUrl && setLightbox({ field: "diagramImageUrl", url: local.diagramImageUrl })} />
+              <img src={withBase(local.diagramImageUrl)} alt="diagram" className="thumb" onClick={() => local.diagramImageUrl && setLightbox({ field: "diagramImageUrl", url: local.diagramImageUrl })} />
             ) : <span className="muted">—</span>}
             <label className="upload-overlay" title="Upload Diagram"><Upload size={14} /><input type="file" hidden accept="image/*" onChange={(e) => handleImageUpload(e, "diagramImageUrl")} /></label>
           </div>
@@ -558,7 +559,7 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minHeight: "54px", paddingLeft: "8px" }}>
             {local.polarImageUrl ? (
-              <img src={local.polarImageUrl} alt="polar curve" className="thumb" onClick={() => local.polarImageUrl && setLightbox({ field: "polarImageUrl", url: local.polarImageUrl })} />
+              <img src={withBase(local.polarImageUrl)} alt="polar curve" className="thumb" onClick={() => local.polarImageUrl && setLightbox({ field: "polarImageUrl", url: local.polarImageUrl })} />
             ) : <span className="muted">—</span>}
             <label className="upload-overlay" title="Upload Polar Curve"><Upload size={14} /><input type="file" hidden accept="image/png,image/jpeg,image/webp" onChange={(e) => handleImageUpload(e, "polarImageUrl")} /></label>
           </div>
@@ -796,7 +797,7 @@ export default function LuminaireTable({
       );
       if (res.ok) {
         const data = await res.json();
-        window.open(data.document.fileUrl, "_blank");
+        window.open(withBase(data.document.fileUrl), "_blank");
         setSelectedRowIds(new Set());
         setBulkTemplateId("");
         refreshUser();

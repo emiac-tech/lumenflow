@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Luminaire, CustomColumn } from "@/types/luminaire";
@@ -83,13 +84,13 @@ export default function PrintPage() {
         <div className="images">
           {data.productImageUrl && (
             <div className="img-box">
-              <img src={data.productImageUrl} alt="Product" />
+              <img src={withBase(data.productImageUrl)} alt="Product" />
               <p>Product Appearance</p>
             </div>
           )}
           {data.diagramImageUrl && (
             <div className="img-box">
-              <img src={data.diagramImageUrl} alt="Diagram" />
+              <img src={withBase(data.diagramImageUrl)} alt="Diagram" />
               <p>Dimensions / Schematic</p>
             </div>
           )}

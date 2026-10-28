@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ImageCropDialog from "@/components/ImageCropDialog";
 import { CustomColumn, Luminaire } from "@/types/luminaire";
@@ -191,7 +192,7 @@ export default function EditLuminaireModal({
         >
           {url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={url} alt={column.label} className="edit-img" />
+            <img src={withBase(url)} alt={column.label} className="edit-img" />
           ) : (
             <div className="edit-img edit-img-empty">Upload {column.label}</div>
           )}
@@ -296,7 +297,7 @@ export default function EditLuminaireModal({
         <label key={column.key} className="field">
           <span className="eyebrow">{column.label}</span>
           {link ? (
-            <a href={link} target="_blank" rel="noreferrer" className="doc-link edit-doc-link">
+            <a href={withBase(link)} target="_blank" rel="noreferrer" className="doc-link edit-doc-link">
               {item?.sourceType === "webpage" ? "Open Page" : "Open PDF"}
             </a>
           ) : (

@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -295,7 +296,7 @@ export default function ImageCropDialog({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               ref={imageRef}
-              src={imageUrl}
+              src={withBase(imageUrl)}
               alt="Crop source"
               className="crop-stage-image"
               onLoad={() => {

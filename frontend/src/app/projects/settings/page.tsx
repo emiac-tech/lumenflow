@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
@@ -180,7 +181,7 @@ export default function ProjectSettingsPage() {
                   <div className="rise-logo-row">
                     {previewLogo && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={previewLogo} alt="Project logo" />
+                      <img src={withBase(previewLogo)} alt="Project logo" />
                     )}
                     <input
                       type="file"

@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/utils/basePath";
 import React, { useState, useEffect } from "react";
 import { Luminaire } from "@/types/luminaire";
 import Link from "next/link";
@@ -295,7 +296,7 @@ export default function PageDesigner() {
       const res = await apiFetch(`/api/luminaires/${selectedLuminaire.id}/templates/${selectedTemplateId}/export?project_id=${activeProjectId}`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
-        window.open(data.document.fileUrl, "_blank");
+        window.open(withBase(data.document.fileUrl), "_blank");
         loadExports();
       }
     } catch (err) { console.error(err); }
@@ -388,7 +389,7 @@ export default function PageDesigner() {
                   onDragStart={(e) => e.dataTransfer.setData("application/json", JSON.stringify({ type: "image", extra: { imageUrl: img.imageUrl, label: img.fileName } }))}
                   onClick={() => addItem("image", { imageUrl: img.imageUrl, label: img.fileName })}
                 >
-                  <img src={img.imageUrl} alt="asset" />
+                  <img src={withBase(img.imageUrl)} alt="asset" />
                 </div>
               ))}
             </div>
@@ -523,7 +524,7 @@ export default function PageDesigner() {
                           alignItems: item.style.verticalAlign === "top" ? "flex-start" : item.style.verticalAlign === "bottom" ? "flex-end" : "center",
                           justifyContent: item.style.textAlign === "center" ? "center" : item.style.textAlign === "right" ? "flex-end" : "flex-start",
                         }}>
-                            {isLine ? null : isImage && url ? <img src={url} draggable={false} onDragStart={e => e.preventDefault()} style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none', pointerEvents: 'none' }} alt="item" /> : content}
+                            {isLine ? null : isImage && url ? <img src={withBase(url)} draggable={false} onDragStart={e => e.preventDefault()} style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none', pointerEvents: 'none' }} alt="item" /> : content}
                         </div>
                         {isSelected && (
                           <div 

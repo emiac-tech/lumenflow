@@ -1,4 +1,5 @@
 "use client";
+import "@/utils/basePath";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
