@@ -13,3 +13,5 @@ passlib[bcrypt]
 python-jose[cryptography]
 google-auth
 bcrypt<4.1
+openpyxl
+Pillow

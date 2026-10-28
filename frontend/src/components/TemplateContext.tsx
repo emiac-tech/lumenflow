@@ -7,6 +7,7 @@ import { apiFetch } from "@/utils/api";
 export interface Template {
   id: number;
   name: string;
+  isDefault?: boolean;
 }
 
 interface TemplateContextValue {
@@ -37,7 +38,13 @@ export function TemplateProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await apiFetch(`/api/templates?project_id=${activeProjectId}`);
       const data = await res.json();
-      setTemplates(data.templates || []);
+      const nextTemplates: Template[] = data.templates || [];
+      setTemplates(nextTemplates);
+      setSelectedTemplateId((current) => {
+        if (current && nextTemplates.some((template) => template.id.toString() === current)) return current;
+        const projectDefault = nextTemplates.find((template) => template.isDefault);
+        return projectDefault ? projectDefault.id.toString() : "";
+      });
     } catch (err) {
       console.error("Failed to load templates", err);
     }

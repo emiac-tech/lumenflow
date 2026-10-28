@@ -17,7 +17,11 @@ interface InviteCode {
 interface UserRecord {
   id: number;
   email: string;
+  name?: string | null;
+  studioName?: string | null;
   role: string;
+  accountType: "admin" | "invited" | "freemium";
+  isActive: boolean;
   tokens: number;
   inviteCode: string | null;
   inviteCodeId: number | null;
@@ -36,10 +40,12 @@ export default function UsersPage() {
   // Edit modal state
   const [editUser, setEditUser] = useState<UserRecord | null>(null);
   const [selectedCodeId, setSelectedCodeId] = useState<string>("");
+  const [editIsActive, setEditIsActive] = useState(true);
   const [topUpAmount, setTopUpAmount] = useState("");
   const [setTokensAmount, setSetTokensAmount] = useState("");
   const [topUpMode, setTopUpMode] = useState<"topup" | "set">("topup");
   const [saving, setSaving] = useState(false);
+  const [statusSavingUserId, setStatusSavingUserId] = useState<number | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -74,6 +80,7 @@ export default function UsersPage() {
   function openEdit(u: UserRecord) {
     setEditUser(u);
     setSelectedCodeId(u.inviteCodeId?.toString() ?? "");
+    setEditIsActive(u.isActive);
     setTopUpAmount("");
     setSetTokensAmount(u.tokens.toString());
     setTopUpMode("topup");
@@ -88,7 +95,7 @@ export default function UsersPage() {
     setError("");
     setSuccess("");
 
-    const body: Record<string, number> = {};
+    const body: Record<string, number | boolean> = { is_active: editIsActive };
     if (selectedCodeId) body.invite_code_id = parseInt(selectedCodeId);
     if (topUpMode === "topup" && topUpAmount) body.top_up_tokens = parseInt(topUpAmount);
     if (topUpMode === "set" && setTokensAmount !== "") body.set_tokens = parseInt(setTokensAmount);
@@ -112,6 +119,30 @@ export default function UsersPage() {
       setError("Network error");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function toggleUserStatus(target: UserRecord) {
+    setStatusSavingUserId(target.id);
+    setError("");
+    setSuccess("");
+    try {
+      const res = await apiFetch(`/api/admin/users/${target.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !target.isActive }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || "Failed to update account status");
+      }
+      const updated: UserRecord = await res.json();
+      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+      setSuccess(`${updated.email} is now ${updated.isActive ? "active" : "inactive"}.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Network error");
+    } finally {
+      setStatusSavingUserId(null);
     }
   }
 
@@ -163,7 +194,10 @@ export default function UsersPage() {
                 <tr>
                   <th><div className="th-content">ID</div></th>
                   <th><div className="th-content">Email</div></th>
+                  <th><div className="th-content">Name / Studio</div></th>
                   <th><div className="th-content">Role</div></th>
+                  <th><div className="th-content">Plan</div></th>
+                  <th><div className="th-content">Status</div></th>
                   <th><div className="th-content">Credits Left</div></th>
                   <th><div className="th-content">Invite Code</div></th>
                   <th><div className="th-content">Code Credits</div></th>
@@ -178,11 +212,39 @@ export default function UsersPage() {
                       <td style={{ padding: 12, color: "var(--muted)", fontSize: 12 }}>{u.id}</td>
                       <td style={{ padding: 12, fontWeight: 500 }}>{u.email}</td>
                       <td style={{ padding: 12 }}>
+                        {u.name || u.studioName ? (
+                          <>
+                            <div>{u.name || "—"}</div>
+                            {u.studioName && <div style={{ fontSize: 12, color: "var(--muted)" }}>{u.studioName}</div>}
+                          </>
+                        ) : (
+                          <span style={{ color: "var(--muted)" }}>—</span>
+                        )}
+                      </td>
+                      <td style={{ padding: 12 }}>
                         <span style={{
                           padding: "3px 10px", borderRadius: 4, fontSize: 11, fontWeight: 700,
                           background: u.role === "admin" ? "var(--accent-soft)" : "rgba(61,216,163,0.12)",
                           color: u.role === "admin" ? "var(--accent)" : "var(--success,#3dd8a3)",
                         }}>{u.role}</span>
+                      </td>
+                      <td style={{ padding: 12 }}>
+                        <span style={{
+                          padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700,
+                          background: u.accountType === "freemium" ? "rgba(245,158,11,0.13)" : "var(--accent-soft)",
+                          color: u.accountType === "freemium" ? "#d97706" : "var(--accent)",
+                        }}>
+                          {u.accountType === "freemium" ? "Freemium" : u.accountType === "admin" ? "Admin" : "Invite"}
+                        </span>
+                      </td>
+                      <td style={{ padding: 12 }}>
+                        <span style={{
+                          padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700,
+                          background: u.isActive ? "rgba(61,216,163,0.12)" : "rgba(245,158,11,0.13)",
+                          color: u.isActive ? "var(--success,#3dd8a3)" : "#d97706",
+                        }}>
+                          {u.isActive ? "Active" : "Pending"}
+                        </span>
                       </td>
                       <td style={{ padding: 12 }}>
                         {u.role === "admin" ? (
@@ -224,23 +286,39 @@ export default function UsersPage() {
                       </td>
                       <td style={{ padding: 12 }}>
                         {u.role === "client" && (
-                          <button
-                            onClick={() => openEdit(u)}
-                            style={{
-                              padding: "5px 14px", border: "1px solid var(--line)", borderRadius: 6,
-                              fontSize: 12, fontWeight: 600, cursor: "pointer",
-                              background: "var(--accent-soft)", color: "var(--accent)",
-                            }}
-                          >
-                            ✏ Edit
-                          </button>
+                          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                            {u.accountType === "freemium" && (
+                              <button
+                                onClick={() => void toggleUserStatus(u)}
+                                disabled={statusSavingUserId === u.id}
+                                style={{
+                                  padding: "5px 10px", border: "1px solid var(--line)", borderRadius: 6,
+                                  fontSize: 11, fontWeight: 700, cursor: "pointer",
+                                  background: u.isActive ? "transparent" : "rgba(61,216,163,0.12)",
+                                  color: u.isActive ? "var(--muted)" : "var(--success,#3dd8a3)",
+                                }}
+                              >
+                                {statusSavingUserId === u.id ? "Saving…" : u.isActive ? "Deactivate" : "Activate"}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => openEdit(u)}
+                              style={{
+                                padding: "5px 14px", border: "1px solid var(--line)", borderRadius: 6,
+                                fontSize: 12, fontWeight: 600, cursor: "pointer",
+                                background: "var(--accent-soft)", color: "var(--accent)",
+                              }}
+                            >
+                              ✏ Edit
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="empty-state">No users found.</td>
+                    <td colSpan={11} className="empty-state">No users found.</td>
                   </tr>
                 )}
               </tbody>
@@ -267,6 +345,28 @@ export default function UsersPage() {
             </div>
 
             <form className="modal-form" onSubmit={handleSaveEdit}>
+
+              <div className="field">
+                <span>Account Status</span>
+                <button
+                  type="button"
+                  onClick={() => setEditIsActive((current) => !current)}
+                  style={{
+                    width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "10px 12px", borderRadius: 8, cursor: "pointer",
+                    border: `1px solid ${editIsActive ? "rgba(61,216,163,0.45)" : "rgba(245,158,11,0.45)"}`,
+                    background: editIsActive ? "rgba(61,216,163,0.1)" : "rgba(245,158,11,0.1)",
+                    color: editIsActive ? "var(--success,#3dd8a3)" : "#d97706",
+                    fontWeight: 700,
+                  }}
+                >
+                  <span>{editIsActive ? "Active — can sign in" : "Pending — sign-in blocked"}</span>
+                  <span>{editIsActive ? "ON" : "OFF"}</span>
+                </button>
+                <small style={{ color: "var(--muted)" }}>
+                  New freemium accounts stay pending until you activate them.
+                </small>
+              </div>
 
               {/* Invite Code Change */}
               <div className="field">

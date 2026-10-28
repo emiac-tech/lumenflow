@@ -14,6 +14,7 @@ interface DesignItem {
   imageUrl: string;
   label: string;
   text: string;
+  emptyText?: string;
   x: number;
   y: number;
   width: number;
@@ -26,6 +27,8 @@ interface DesignItem {
     borderWidth: number;
     fontWeight: string;
     padding: number;
+    textAlign?: "left" | "center" | "right";
+    verticalAlign?: "top" | "middle" | "bottom";
   };
 }
 
@@ -47,6 +50,34 @@ const fieldBindings: [string, string][] = [
   ["quantity", "Quantity"],
   ["ipRating", "IP Rating"],
   ["totalWatts", "Total Watts"],
+  ["projectName", "Project Name"],
+  ["projectLogoUrl", "Project Logo"],
+  ["projectLocationCountry", "Project Location / Country"],
+  ["projectRevision", "Project Revision"],
+  ["projectIssueDate", "Project Issue Date"],
+  ["luminaireReference", "Luminaire Reference"],
+  ["luminaireLocation", "Luminaire Location"],
+  ["productCode", "Product Code / Ref."],
+  ["productName", "Product Name"],
+  ["mountingType", "Mounting Type"],
+  ["lightSource", "Light Source"],
+  ["wattage", "Wattage"],
+  ["colourTemperature", "Colour Temperature"],
+  ["macadam", "MacAdam / SDCM"],
+  ["beamDistribution", "Beam / Distribution"],
+  ["deliveredLumens", "Delivered Lumens"],
+  ["ledLifetime", "LED Lifetime"],
+  ["inputVoltage", "Input Voltage"],
+  ["emergencyProvision", "Emergency Provision"],
+  ["dimensions", "Dimensions"],
+  ["material", "Material"],
+  ["finishColour", "Finish / Colour"],
+  ["ikRating", "IK Rating"],
+  ["weight", "Weight"],
+  ["operatingTemperature", "Operating Temperature"],
+  ["requiredAccessories", "Required Accessories"],
+  ["generalNotes", "General Notes"],
+  ["sourceDocument", "Source Document"],
   ["productImageUrl", "Product Image"],
   ["diagramImageUrl", "Diagram Image"],
 ];
@@ -61,6 +92,8 @@ const blankStyle = () => ({
   borderWidth: 0,
   fontWeight: "normal",
   padding: 8,
+  textAlign: "left" as const,
+  verticalAlign: "middle" as const,
 });
 
 import Sidebar from "@/components/Sidebar";
@@ -85,6 +118,7 @@ export default function PageDesigner() {
   const [showToast, setShowToast] = useState(false);
   const [zoom, setZoom] = useState(1.8);
   const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
+  const [designerContext, setDesignerContext] = useState<Record<string, any>>({});
 
   useEffect(() => {
     if (activeProjectId === null) return;
@@ -97,6 +131,17 @@ export default function PageDesigner() {
     });
     loadExports();
   }, [activeProjectId]);
+
+  useEffect(() => {
+    if (!selectedLuminaire) {
+      setDesignerContext({});
+      return;
+    }
+    apiFetch(`/api/luminaires/${selectedLuminaire.id}/designer-context`)
+      .then((response) => response.ok ? response.json() : {})
+      .then((data) => setDesignerContext(data || {}))
+      .catch((error) => console.error("Failed to load designer context", error));
+  }, [selectedLuminaire]);
 
   // React to sidebar template selection
   useEffect(() => {
@@ -187,7 +232,7 @@ export default function PageDesigner() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await apiFetch(`/api/luminaires/0/designer-assets?project_id=${activeProjectId}`, { method: "POST", body: formData });
+      const res = await apiFetch(`/api/projects/${activeProjectId}/designer-assets`, { method: "POST", body: formData });
       const data = await res.json();
       if (res.ok) setCustomImages(prev => [...prev, { fileName: data.fileName, imageUrl: data.imageUrl }]);
     } catch (err) { console.error(err); }
@@ -257,6 +302,7 @@ export default function PageDesigner() {
   };
 
   const selectedItem = currentDesign.items.find(i => i.id === selectedItemId);
+  const selectedTemplate = templates.find((template) => template.id.toString() === selectedTemplateId);
 
   const updateSelectedItem = (key: string, val: any) => {
     setCurrentDesign(prev => ({
@@ -290,7 +336,7 @@ export default function PageDesigner() {
             <h3 style={{ fontSize: "11px", fontWeight: 700, marginBottom: "12px", color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Row values</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               {fieldBindings.map(([key, label]) => {
-                const isImage = key.includes("Image");
+                const isImage = key.includes("Image") || key === "projectLogoUrl";
                 return (
                   <button 
                     key={key} 
@@ -363,7 +409,7 @@ export default function PageDesigner() {
                   style={{ background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--line)', padding: '6px 12px', borderRadius: '4px', fontSize: '13px' }}
                 >
                   <option value="">New Template</option>
-                  {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                  {templates.map(t => <option key={t.id} value={t.id}>{t.name}{t.isDefault ? " (Default)" : ""}</option>)}
                 </select>
                 <input 
                   value={templateName}
@@ -373,7 +419,7 @@ export default function PageDesigner() {
                 />
                 <button className="workspace-action-btn" onClick={() => handleTemplateChange("")}>New</button>
                 <button className="primary-button" onClick={handleSave} style={{ alignSelf: 'center', height: '32px', fontSize: '13px' }}>Save</button>
-                {selectedTemplateId && (
+                {selectedTemplateId && !selectedTemplate?.isDefault && (
                   <button className="workspace-action-btn" style={{ borderColor: 'var(--danger)', color: 'var(--danger)' }} onClick={confirmDelete}>Delete</button>
                 )}
                 <button className="primary-button" onClick={handleExport} style={{ alignSelf: 'center', height: '32px', fontSize: '13px', background: 'var(--accent)' }}>Export PDF</button>
@@ -442,13 +488,13 @@ export default function PageDesigner() {
                     const isSelected = item.id === selectedItemId;
                     let content: React.ReactNode = item.text;
                     if (item.type === "field" && selectedLuminaire) {
-                      const val = (selectedLuminaire as any)[item.bindingKey];
+                      const val = designerContext[item.bindingKey] ?? (selectedLuminaire as any)[item.bindingKey];
                       const customVal = (selectedLuminaire as any).customData?.[item.bindingKey];
-                      content = val || customVal || `[${item.label}]`;
+                      content = val || customVal || item.emptyText || `[${item.label}]`;
                     }
                     const isImage = item.type === "image";
                     const isLine = item.type === "line";
-                    const url = item.imageUrl || (selectedLuminaire && (selectedLuminaire as any)[item.bindingKey]);
+                    const url = item.imageUrl || designerContext[item.bindingKey] || (selectedLuminaire && (selectedLuminaire as any)[item.bindingKey]);
 
                     return (
                       <div
@@ -463,13 +509,20 @@ export default function PageDesigner() {
                           position: "absolute", left: item.x, top: item.y, width: item.width, height: item.height,
                           fontSize: item.style.fontSize, color: item.style.color,
                           backgroundColor: isLine ? item.style.backgroundColor : item.style.backgroundColor,
-                          border: isSelected ? "2px solid #2d8cff" : (item.style.borderWidth > 0 ? `${item.style.borderWidth}px solid ${item.style.borderColor}` : "none"),
+                          border: isSelected ? "2px solid var(--accent)" : (item.style.borderWidth > 0 ? `${item.style.borderWidth}px solid ${item.style.borderColor}` : "none"),
                           padding: isLine ? 0 : item.style.padding,
                           fontWeight: item.style.fontWeight, cursor: "move", display: "flex", overflow: "visible", boxSizing: 'border-box',
+                          textAlign: item.style.textAlign || "left",
+                          alignItems: item.style.verticalAlign === "top" ? "flex-start" : item.style.verticalAlign === "bottom" ? "flex-end" : "center",
                           userSelect: 'none', ...({"WebkitUserDrag": "none"} as React.CSSProperties),
                         }}
                       >
-                        <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+                        <div style={{
+                          width: '100%', height: '100%', overflow: 'hidden',
+                          display: 'flex',
+                          alignItems: item.style.verticalAlign === "top" ? "flex-start" : item.style.verticalAlign === "bottom" ? "flex-end" : "center",
+                          justifyContent: item.style.textAlign === "center" ? "center" : item.style.textAlign === "right" ? "flex-end" : "flex-start",
+                        }}>
                             {isLine ? null : isImage && url ? <img src={url} draggable={false} onDragStart={e => e.preventDefault()} style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none', pointerEvents: 'none' }} alt="item" /> : content}
                         </div>
                         {isSelected && (

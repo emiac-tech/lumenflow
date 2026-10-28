@@ -1,0 +1,1508 @@
+/* ──────────────────────────────────────────────────────────────
+   RISE OS design layer (Oct 2026)
+   Loaded after globals.css. Re-maps the existing LumenFlow tokens and
+   components to the RISE OS look: warm paper background, dark brown
+   sidebar, red accent, Manrope headings and DM Sans body text.
+   ────────────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+:root,
+:root.light,
+:root.dark {
+  --rise-paper: #f8f7f4;
+  --rise-card: #fffdfb;
+  --rise-ink: #231a17;
+  --rise-ink-soft: #4b3d37;
+  --rise-muted: #8a766a;
+  --rise-line: #e8dcd5;
+  --rise-line-strong: #dccbc1;
+  --rise-red: #e52d29;
+  --rise-red-deep: #b32d26;
+  --rise-red-soft: #fff0eb;
+  --rise-side: #251716;
+  --rise-side-text: #d9c5bd;
+  --rise-side-label: #bd8172;
+
+  --bg: var(--rise-paper);
+  --panel: var(--rise-card);
+  --panel-soft: #faf8f7;
+  --line: var(--rise-line);
+  --text: var(--rise-ink);
+  --muted: var(--rise-muted);
+  --accent: var(--rise-red);
+  --accent-soft: var(--rise-red-soft);
+  --success: #3c7a4b;
+  --danger: #b22821;
+  --shadow: 0 1px 2px rgba(37, 23, 22, 0.04);
+  --radius: 7px;
+  --body-bg-gradient: var(--rise-paper);
+  --sidebar-gradient: var(--rise-side);
+  --th-bg: #faf6f3;
+  --input-bg: #ffffff;
+  --input-focus: #ffffff;
+  --surface-container: var(--rise-card);
+  --surface-low: #f7f3f0;
+  --button-hover: #f3efeb;
+  --button-bg: var(--rise-card);
+  --brand-text: var(--rise-ink);
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--rise-paper);
+}
+
+body {
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 15px;
+  color: var(--rise-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.brand {
+  font-family: "Manrope", Arial, sans-serif;
+}
+
+/* ── Shell: header row + sidebar + main ── */
+.shell {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  grid-template-rows: 76px minmax(0, 1fr);
+  height: 100vh;
+  overflow: hidden;
+  background: var(--rise-paper);
+}
+
+.rise-top {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 32px;
+  background: #fffdfc;
+  border-bottom: 1px solid var(--rise-line);
+  min-width: 0;
+}
+
+.rise-lockup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--rise-ink);
+}
+
+.rise-word {
+  font-family: "Manrope", Arial, sans-serif;
+  font-weight: 800;
+  font-size: 27px;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: var(--rise-ink);
+}
+
+.rise-word b {
+  font-weight: 800;
+  color: var(--rise-red);
+  margin-left: 2px;
+}
+
+.rise-lockup-sub {
+  display: grid;
+  gap: 2px;
+  padding-left: 16px;
+  border-left: 1px solid var(--rise-line);
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--rise-ink-soft);
+}
+
+.rise-lockup-sub small {
+  font-size: 10.5px;
+  color: var(--rise-red-deep);
+}
+
+.rise-top-account {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+.rise-top-user {
+  font-size: 13px;
+  color: var(--rise-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.rise-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--rise-line-strong);
+  background: #fffdfb;
+  color: var(--rise-ink);
+  font: 600 13px "DM Sans", Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rise-btn-outline:hover {
+  border-color: var(--rise-ink);
+}
+
+/* ── Sidebar ── */
+.sidebar.rise-side {
+  --text: #fff;
+  --muted: var(--rise-side-text);
+  background: var(--rise-side);
+  color: var(--rise-side-text);
+  border-right: 0;
+  padding: 26px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  backdrop-filter: none;
+}
+
+.sidebar.rise-side::before,
+.sidebar.rise-side::after {
+  display: none;
+}
+
+.rise-side-label {
+  color: var(--rise-side-label);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0 12px;
+  margin: 0 0 12px;
+}
+
+.rise-side-nav {
+  display: grid;
+  gap: 5px;
+}
+
+.rise-side-nav + .rise-side-label {
+  margin-top: 26px;
+}
+
+.rise-side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 12px;
+  border-radius: 5px;
+  font-size: 13.5px;
+  color: var(--rise-side-text);
+  text-decoration: none;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.rise-side-nav a svg {
+  color: #df9d8e;
+  flex-shrink: 0;
+}
+
+.rise-side-nav a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.rise-side-nav a[aria-current="page"] {
+  background: var(--rise-red-deep);
+  color: #fff;
+}
+
+.rise-side-nav a[aria-current="page"] svg {
+  color: #fff;
+}
+
+.rise-credits {
+  margin-top: 28px;
+  padding: 16px 16px 15px;
+  border-radius: 6px;
+  background: #382923;
+  color: #efdcd6;
+}
+
+.rise-credits .rise-side-label {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.rise-credits strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.35;
+  color: #fff;
+  font-weight: 700;
+}
+
+.rise-credits-bar {
+  height: 3px;
+  margin: 13px 0 11px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.rise-credits-bar span {
+  display: block;
+  height: 100%;
+  background: var(--rise-red);
+}
+
+.rise-credits p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #bfa296;
+}
+
+.rise-side-bottom {
+  margin-top: auto;
+  padding: 26px 12px 0;
+  display: grid;
+  gap: 12px;
+  font-size: 11px;
+  color: #bfa296;
+}
+
+.rise-side-bottom a,
+.rise-side-bottom button {
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  color: #bfa296;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.rise-side-bottom a:hover,
+.rise-side-bottom button:hover {
+  color: #fff;
+}
+
+/* ── Main area ── */
+.main {
+  height: 100%;
+  min-height: 0;
+  padding: 40px 52px 0;
+  gap: 24px;
+  overflow: auto;
+  background: var(--rise-paper);
+}
+
+.main > *:last-child {
+  margin-bottom: 40px;
+}
+
+.main.schedule-main {
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+.main.schedule-main > *:last-child {
+  margin-bottom: 0;
+}
+
+.topbar {
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.eyebrow,
+.topbar .eyebrow,
+.rise-eyebrow {
+  color: #c73328;
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.topbar h1,
+.rise-page-head h1 {
+  font-family: "Manrope", Arial, sans-serif;
+  font-size: clamp(34px, 3.6vw, 54px);
+  line-height: 1.06;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  color: var(--rise-ink);
+}
+
+.rise-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.rise-page-head p.rise-lead {
+  margin-top: 14px;
+  max-width: 720px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--rise-ink-soft);
+}
+
+.rise-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--rise-muted);
+  margin-bottom: -6px;
+}
+
+.rise-crumbs a {
+  color: var(--rise-red-deep);
+  text-decoration: none;
+}
+
+.rise-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 12.5px;
+  color: var(--rise-muted);
+  margin-top: 12px;
+}
+
+.rise-note {
+  padding: 15px 20px;
+  border-radius: 6px;
+  background: #f1ebe6;
+  color: var(--rise-ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.rise-note b {
+  color: var(--rise-ink);
+}
+
+/* ── Buttons ── */
+.primary-button {
+  padding: 12px 20px;
+  border-radius: 6px;
+  background: var(--rise-red);
+  color: #fff;
+  font: 600 14px "DM Sans", Arial, sans-serif;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.primary-button:hover {
+  background: var(--rise-red-deep);
+  box-shadow: none;
+  transform: none;
+}
+
+.ghost-button {
+  padding: 12px 18px;
+  border-radius: 6px;
+  background: #fffdfb;
+  color: var(--rise-ink);
+  border: 1px solid var(--rise-line-strong);
+  font: 500 14px "DM Sans", Arial, sans-serif;
+}
+
+.ghost-button:hover {
+  background: #fff;
+  border-color: var(--rise-ink);
+  transform: none;
+}
+
+.danger-button,
+.ghost-button.danger-button {
+  color: var(--danger);
+  border-color: #efc8c2;
+}
+
+.rise-link {
+  color: var(--rise-red-deep);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}
+
+.rise-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Cards / panels ── */
+.status-bar,
+.rise-card {
+  background: var(--rise-card);
+  border: 1px solid var(--rise-line);
+  border-radius: 8px;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.rise-card {
+  padding: 26px 28px;
+}
+
+.status-label {
+  color: var(--rise-ink);
+}
+
+.rise-panel-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c73328;
+  margin-bottom: 16px;
+}
+
+/* Home studio card */
+.rise-studio {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.rise-studio-mark {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  border: 1px solid #f0d2c9;
+  background: #fff3ee;
+  color: var(--rise-red-deep);
+  font: 600 30px "Manrope", Arial, sans-serif;
+  overflow: hidden;
+}
+
+.rise-studio-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
+
+.rise-studio h2 {
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  color: var(--rise-ink);
+  margin: 2px 0 4px;
+}
+
+.rise-studio p {
+  color: var(--rise-muted);
+  font-size: 14px;
+}
+
+.rise-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--rise-line);
+  border-bottom: 1px solid var(--rise-line);
+}
+
+.rise-stats > div {
+  padding: 18px 22px 20px 0;
+}
+
+.rise-stats > div + div {
+  padding-left: 22px;
+  border-left: 1px solid var(--rise-line);
+}
+
+.rise-stats span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--rise-muted);
+  margin-bottom: 6px;
+}
+
+.rise-stats strong {
+  font: 500 30px "Manrope", Arial, sans-serif;
+  letter-spacing: -0.04em;
+  color: var(--rise-ink);
+}
+
+.rise-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.rise-section-head h2 {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  color: var(--rise-ink);
+}
+
+/* Project cards */
+.rise-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.rise-project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 170px;
+  padding: 22px 22px 18px;
+  background: var(--rise-card);
+  border: 1px solid var(--rise-line);
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, transform 140ms ease;
+  font-family: inherit;
+  color: var(--rise-ink);
+}
+
+.rise-project-card:hover {
+  border-color: var(--rise-line-strong);
+  transform: translateY(-1px);
+}
+
+.rise-project-card.active {
+  border-color: #e9a99e;
+}
+
+.rise-project-card .rise-panel-label {
+  margin-bottom: 0;
+  font-size: 9.5px;
+}
+
+.rise-project-card h3 {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.rise-project-card .rise-card-meta {
+  font-size: 12.5px;
+  color: var(--rise-muted);
+}
+
+.rise-project-card .rise-card-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #f0e7e2;
+}
+
+.rise-card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.rise-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--rise-muted);
+  cursor: pointer;
+}
+
+.rise-icon-btn:hover {
+  border-color: var(--rise-line);
+  background: #fff;
+  color: var(--rise-ink);
+}
+
+.rise-icon-btn.danger:hover {
+  color: var(--danger);
+  border-color: #efc8c2;
+}
+
+.rise-empty {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 54px 24px;
+  border: 1px dashed var(--rise-line-strong);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--rise-muted);
+  background: transparent;
+}
+
+.rise-empty h3 {
+  color: var(--rise-ink);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.rise-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 260px;
+  padding: 10px 14px;
+  border: 1px solid var(--rise-line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--rise-muted);
+}
+
+.rise-search input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: 14px "DM Sans", Arial, sans-serif;
+  color: var(--rise-ink);
+  width: 100%;
+}
+
+.rise-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.rise-filters label {
+  display: grid;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rise-ink);
+}
+
+.rise-filters select,
+.rise-filters input {
+  min-width: 220px;
+  padding: 11px 14px;
+  border: 1px solid var(--rise-line-strong);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--rise-ink);
+  font: 14px "DM Sans", Arial, sans-serif;
+}
+
+.rise-doc-table {
+  width: 100%;
+  min-width: 0 !important;
+  table-layout: auto;
+  border-collapse: collapse;
+  background: var(--rise-card);
+  border: 1px solid var(--rise-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rise-doc-table th,
+.rise-doc-table td {
+  text-align: left;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f0e7e2;
+  font-size: 13.5px;
+  color: var(--rise-ink);
+}
+
+.rise-doc-table th {
+  position: static;
+  background: #faf6f3;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rise-muted);
+}
+
+.rise-doc-table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Setup hub */
+.rise-setup-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.rise-list {
+  display: grid;
+  border-top: 1px solid #f0e7e2;
+}
+
+.rise-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0e7e2;
+  font-size: 14px;
+}
+
+.rise-list-row button.rise-list-name {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--rise-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.rise-list-row button.rise-list-name:hover {
+  color: var(--rise-red-deep);
+}
+
+.rise-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3ece7;
+  color: var(--rise-muted);
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+/* ── Forms ── */
+.field span,
+.modal .field span {
+  color: var(--rise-ink);
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.field input,
+.field textarea,
+.field select,
+.modal .field input,
+.modal .field textarea {
+  background: #fff;
+  color: var(--rise-ink);
+  border: 1px solid var(--rise-line-strong);
+  border-radius: 6px;
+  font-family: "DM Sans", Arial, sans-serif;
+  box-shadow: none;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--rise-red);
+  box-shadow: 0 0 0 3px rgba(229, 45, 41, 0.12);
+  background: #fff;
+}
+
+/* ── Modals ── */
+.modal-backdrop {
+  background: rgba(37, 23, 22, 0.5);
+  backdrop-filter: blur(6px);
+}
+
+.modal,
+.ai-column-modal,
+.crop-modal {
+  background: #fffdfb;
+  color: var(--rise-ink);
+  border: 1px solid var(--rise-line);
+  border-radius: 9px;
+  box-shadow: 0 25px 110px rgba(37, 23, 22, 0.16);
+}
+
+.modal h2,
+.modal .modal-header h2,
+.modal .processing-state h2 {
+  color: var(--rise-ink);
+  font-family: "Manrope", Arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.modal .modal-header p,
+.modal .modal-header p:last-child,
+.modal .field small,
+.modal .muted,
+.modal .edit-image-hint {
+  color: var(--rise-muted);
+}
+
+.close-button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #9b8173;
+  border-radius: 4px;
+}
+
+.close-button:hover {
+  background: #f3ece7;
+  color: var(--rise-ink);
+}
+
+/* ── Luminaire table ── */
+.table-card {
+  background: var(--rise-card);
+  border: 1px solid var(--rise-line);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+th,
+:root.light th {
+  background: #faf6f3;
+  color: var(--rise-ink);
+}
+
+.select-column-label {
+  color: var(--rise-ink);
+}
+
+/* ── Auth pages ── */
+.rise-auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+  background: var(--rise-paper);
+}
+
+.rise-auth-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 36px 56px 44px;
+  border-right: 1px solid var(--rise-line);
+  overflow: hidden;
+}
+
+.rise-auth-story .rise-eyebrow {
+  margin: 0 0 22px;
+}
+
+.rise-auth-story h1 {
+  font-family: "Manrope", Arial, sans-serif;
+  font-size: clamp(48px, 5.4vw, 86px);
+  line-height: 0.98;
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  color: var(--rise-ink);
+}
+
+.rise-auth-story h1 span {
+  display: block;
+  color: var(--rise-red);
+}
+
+.rise-auth-story .rise-auth-tag {
+  margin-top: 26px;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  color: var(--rise-ink);
+}
+
+.rise-auth-story .rise-auth-copy {
+  margin-top: 14px;
+  max-width: 520px;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: #70645c;
+}
+
+.rise-auth-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rise-auth-step {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-align: left;
+  padding: 14px 14px 16px;
+  border: 1px solid var(--rise-line);
+  border-radius: 7px;
+  background: #fffdfb;
+  color: var(--rise-ink);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 600ms ease, border-color 600ms ease, color 600ms ease, transform 600ms ease,
+    box-shadow 600ms ease;
+}
+
+.rise-auth-step small {
+  display: block;
+}
+
+.rise-auth-step.done {
+  border-color: #e7c7bf;
+}
+
+.rise-auth-step.active {
+  background: #c9372e;
+  border-color: #c9372e;
+  color: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(201, 55, 46, 0.22);
+}
+
+.rise-auth-step:hover:not(.active) {
+  border-color: #d9a79c;
+}
+
+.rise-auth-step-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.75);
+  transform-origin: left center;
+  animation-name: rise-step-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.rise-auth-steps.paused .rise-auth-step-progress {
+  animation-play-state: paused;
+}
+
+@keyframes rise-step-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-auth-step {
+    transition: none;
+  }
+}
+
+.rise-auth-steps b {
+  display: block;
+  font: 500 19px "Manrope", Arial, sans-serif;
+  letter-spacing: -0.04em;
+  margin-bottom: 4px;
+}
+
+.rise-auth-steps small {
+  font-size: 11.5px;
+  opacity: 0.8;
+}
+
+.rise-auth-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 28px;
+}
+
+.rise-auth-card {
+  width: 100%;
+  max-width: 470px;
+  padding: 34px 36px 30px;
+  background: #fffdfb;
+  border: 1px solid var(--rise-line);
+  border-radius: 9px;
+  box-shadow: 0 25px 110px rgba(37, 23, 22, 0.09);
+}
+
+.rise-auth-card .rise-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  margin: 0;
+}
+
+.rise-auth-card h2 {
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.055em;
+  font-weight: 500;
+  margin: 14px 0 10px;
+  color: var(--rise-ink);
+}
+
+.rise-auth-card .rise-auth-desc {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #8a766a;
+  margin-bottom: 24px;
+}
+
+.rise-auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.rise-auth-form .field {
+  gap: 7px;
+}
+
+.rise-auth-form .field input {
+  padding: 13px 14px;
+  font-size: 14.5px;
+}
+
+.rise-auth-form .field em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--rise-muted);
+}
+
+.rise-pw {
+  position: relative;
+}
+
+.rise-pw input {
+  width: 100%;
+  padding-right: 64px !important;
+}
+
+.rise-pw button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 0;
+  color: var(--rise-muted);
+  font: 600 12px "DM Sans", Arial, sans-serif;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
+.rise-auth-submit {
+  width: 100%;
+  justify-content: space-between;
+  padding: 15px 18px !important;
+  margin-top: 4px;
+}
+
+.rise-auth-msg {
+  padding: 11px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.rise-auth-msg.error {
+  background: #fff1ee;
+  border: 1px solid #f3c9c2;
+  color: #b22821;
+}
+
+.rise-auth-msg.success {
+  background: #f0f5ec;
+  border: 1px solid #cfe0c4;
+  color: #35603f;
+}
+
+.rise-auth-switch {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #f0e7e2;
+  font-size: 13px;
+  color: var(--rise-muted);
+}
+
+.rise-auth-switch a {
+  color: var(--rise-red-deep);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rise-auth-foot {
+  font-size: 11.5px;
+  color: #a18b7b;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1180px) {
+  .rise-auth {
+    grid-template-columns: 1fr;
+  }
+  .rise-auth-story {
+    border-right: 0;
+    border-bottom: 1px solid var(--rise-line);
+    padding: 28px 28px 32px;
+  }
+  .rise-auth-steps {
+    display: none;
+  }
+  .rise-setup-grid {
+    grid-template-columns: 1fr;
+  }
+  .rise-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rise-stats > div:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .rise-stats > div:nth-child(n + 3) {
+    border-top: 1px solid var(--rise-line);
+  }
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 64px auto minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+  .rise-lockup-sub {
+    display: none;
+  }
+  .sidebar.rise-side {
+    padding: 14px;
+  }
+  .rise-side-nav {
+    grid-auto-flow: column;
+    overflow-x: auto;
+  }
+  .rise-credits,
+  .rise-side-bottom,
+  .rise-side-label {
+    display: none;
+  }
+  .main {
+    padding: 28px 20px 0;
+    overflow: visible;
+  }
+}
+
+/* Field labels inside the Add / Edit luminaire modals use .eyebrow; keep them
+   readable rather than heading-like. */
+.modal .eyebrow,
+.modal span.eyebrow {
+  color: var(--rise-muted);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  margin-bottom: 8px;
+}
+
+.modal .modal-header > .eyebrow:first-child {
+  color: #c73328;
+}
+
+/* ── Studio / project brand (Setup, New project, Project settings) ── */
+.rise-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
+  gap: 36px;
+  align-items: start;
+}
+
+.rise-form {
+  display: grid;
+  gap: 18px;
+}
+
+.rise-form .field input[type="file"] {
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.rise-form .field input[type="color"] {
+  width: 76px;
+  height: 46px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.rise-formrow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.rise-fine {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--rise-muted);
+}
+
+.rise-save-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rise-save-msg {
+  font-size: 12.5px;
+  color: #947567;
+}
+
+.rise-save-msg.error {
+  color: var(--danger);
+}
+
+.rise-sheet {
+  background: #fff;
+  border: 1px solid #dfd4d0;
+  border-top: 5px solid var(--rise-red);
+  padding: 28px;
+  box-shadow: 0 14px 40px rgba(48, 26, 20, 0.06);
+  min-height: 430px;
+}
+
+.rise-sheet.compact {
+  min-height: 300px;
+  padding: 20px;
+}
+
+.rise-sheet-logo {
+  display: block;
+  max-width: 130px;
+  max-height: 64px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.rise-sheet-brand {
+  font: 700 18px "Manrope", Arial, sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--rise-ink);
+}
+
+.rise-sheet-title {
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 24px 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rise-line);
+  color: var(--rise-ink-soft);
+}
+
+.rise-sheet.compact .rise-sheet-title {
+  margin: 14px 0;
+}
+
+.rise-sheet h3 {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin: 0 0 6px;
+  color: var(--rise-ink);
+}
+
+.rise-sheet-meta {
+  font-size: 12px;
+  color: var(--rise-muted);
+  margin-bottom: 8px;
+}
+
+.rise-sheet-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid #eee5e1;
+  padding: 12px 0;
+  font-size: 12px;
+}
+
+.rise-sheet.compact .rise-sheet-row {
+  padding: 7px 0;
+}
+
+.rise-sheet-row span {
+  color: var(--rise-muted);
+}
+
+.rise-sheet-caption {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rise-muted);
+  margin-top: 14px;
+}
+
+.rise-project-scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12.5px;
+  color: #927b71;
+  margin-top: 12px;
+}
+
+.rise-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.rise-logo-row img {
+  max-width: 120px;
+  max-height: 46px;
+  object-fit: contain;
+  border: 1px solid var(--rise-line);
+  border-radius: 5px;
+  background: #fff;
+  padding: 4px;
+}
+
+.rise-studio-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+  background: #fff;
+}
+
+@media (max-width: 1180px) {
+  .rise-pane {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rise-scope-pill {
+  align-self: flex-start;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #f1e9e4;
+  border-radius: 4px;
+  padding: 5px 8px;
+  color: #816458;
+}
+
+.rise-stats.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.field span.rise-fine,
+.field span .rise-fine {
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--rise-muted);
+}
+
+.field select {
+  padding: 12px 14px;
+  font-size: 14.5px;
+  min-height: 46px;
+}
+
+/* Crop dialog: the selection's outside-mask is a huge box-shadow; keep it
+   inside the image stage so the dialog header and buttons stay readable. */
+.crop-stage-shell {
+  overflow: hidden;
+  background: #f3eee9;
+  border-color: var(--rise-line);
+}
+
+.crop-modal .muted,
+.crop-modal-copy {
+  color: var(--rise-muted);
+}
+
+/* Enlarged image (table) with Crop / Change image actions */
+.lightbox {
+  background: rgba(37, 23, 22, 0.82);
+}
+
+.lightbox-stack {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+
+.lightbox-img {
+  max-height: 78vh;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.lightbox-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fffdfb;
+  border: 1px solid var(--rise-line);
+  box-shadow: 0 10px 40px rgba(37, 23, 22, 0.25);
+}
+
+.lightbox-toolbar .ghost-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-size: 13.5px;
+}
+
+.lightbox-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c73328;
+  padding: 0 6px;
+}
+
+.lightbox-msg {
+  font-size: 12.5px;
+  color: var(--rise-muted);
+}
+
+.lightbox-close {
+  background: #fffdfb;
+  color: var(--rise-ink);
+  border: 1px solid var(--rise-line);
+}
+
+.crop-stage-image {
+  max-height: 60vh;
+}

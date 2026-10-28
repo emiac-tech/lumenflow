@@ -223,7 +223,7 @@ export default function InviteCodesPage() {
   return (
     <div className="shell">
       <Sidebar />
-      <main className="main">
+      <main className="main invite-codes-main">
         <header className="topbar">
           <div>
             <p className="eyebrow">Administration</p>

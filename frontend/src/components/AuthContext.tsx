@@ -8,6 +8,10 @@ export interface User {
   email: string;
   role: "admin" | "client";
   tokens: number;
+  accountType: "admin" | "invited" | "freemium";
+  isActive: boolean;
+  name?: string | null;
+  studioName?: string | null;
 }
 
 interface AuthContextType {
@@ -44,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }).then(res => {
           if (res.ok) return res.json();
           // Token expired/invalid — force logout
-          if (res.status === 401) {
+          if (res.status === 401 || res.status === 403) {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
             setToken(null);

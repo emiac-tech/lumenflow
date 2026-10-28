@@ -15,3 +15,21 @@ frontend/frontend.log
 *.tsbuildinfo
 *.bak_*
 docker-compose.override.yml
+
+# --- local / runtime artefacts (added with RISE OS redesign) ---
+/data/
+/uploads/
+/exports/
+/backups/
+/backup_*/
+*.bak*
+*.pre-*
+*.log
+api_log.txt
+nohup.out
+users_backup_*.csv
+.codex_patch_export.py
+._*
+.venv/
+.rise-redesign-backup-*/
+luminaire.db

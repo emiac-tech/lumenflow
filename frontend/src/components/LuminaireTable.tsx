@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Luminaire, CustomColumn } from "@/types/luminaire";
 import Lightbox from "./Lightbox";
+
+type ImageFieldKey = "productImageUrl" | "diagramImageUrl" | "polarImageUrl";
 import { 
   Maximize2, Hash, Type, Image as ImageIcon, Tag, AlignLeft, Settings, 
   FileText, LayoutTemplate, Palette, Plus, ChevronDown, Edit2, Trash2, 
   Upload, Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight, 
-  GripVertical, Eye, EyeOff, Columns3, Settings2, ArrowUp, ArrowDown, Pencil 
+  GripVertical, Eye, EyeOff, Columns3, Settings2, ArrowUp, ArrowDown, Pencil,
+  Download
 } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import { apiFetch } from "@/utils/api";
+import { hasMultipleOptions, MULTI_OPTION_HINT } from "@/utils/options";
 
 export interface SortRule {
   key: string;
@@ -27,9 +31,11 @@ export interface FilterCondition {
 interface EditableCellProps {
   value: string | null;
   onSave: (val: string) => void;
+  readOnly?: boolean;
+  highlightOptions?: boolean;
 }
 
-function EditableCell({ value, onSave }: EditableCellProps) {
+function EditableCell({ value, onSave, readOnly = false, highlightOptions = true }: EditableCellProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [val, setVal] = useState(value || "");
 
@@ -38,7 +44,7 @@ function EditableCell({ value, onSave }: EditableCellProps) {
   }, [value]);
 
   if (isEditing) {
-    return (
+  return (
       <input
         autoFocus
         className="editable-input"
@@ -64,8 +70,14 @@ function EditableCell({ value, onSave }: EditableCellProps) {
     );
   }
 
+  const multiOption = highlightOptions && hasMultipleOptions(value);
+
   return (
-    <div className="editable-text" onClick={() => setIsEditing(true)}>
+    <div
+      className={`editable-text${readOnly ? " readonly-cell" : ""}${multiOption ? " multi-option-value" : ""}`}
+      onClick={() => { if (!readOnly) setIsEditing(true); }}
+      title={readOnly ? "Calculated from Unit Watts and Qty" : multiOption ? MULTI_OPTION_HINT : undefined}
+    >
       {value || <span className="muted">—</span>}
     </div>
   );
@@ -126,6 +138,22 @@ function moveKey(keys: string[], draggedKey: string, targetKey: string) {
   const [moved] = next.splice(fromIndex, 1);
   next.splice(toIndex, 0, moved);
   return next;
+}
+
+function parseDownloadFilename(disposition: string | null, fallback: string) {
+  if (!disposition) return fallback;
+
+  const encodedMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+  if (encodedMatch?.[1]) {
+    try {
+      return decodeURIComponent(encodedMatch[1]);
+    } catch {
+      return encodedMatch[1];
+    }
+  }
+
+  const plainMatch = disposition.match(/filename="?([^";]+)"?/i);
+  return plainMatch?.[1] || fallback;
 }
 
 function FilterPopover({ 
@@ -406,7 +434,7 @@ interface TableRowProps {
 }
 
 function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, activeProjectId, rowHeight, isSelected, onToggleSelect }: TableRowProps) {
-  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{ field: ImageFieldKey; url: string } | null>(null);
   const { refreshUser } = useAuth();
   const [local, setLocal] = useState({ ...item });
   const [isExporting, setIsExporting] = useState(false);
@@ -426,6 +454,8 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         body: JSON.stringify({ [field]: value }),
       });
       if (!res.ok) throw new Error("Failed to save");
+      const saved = await res.json();
+      setLocal(saved);
     } catch (err) {
       console.error(err);
     }
@@ -448,25 +478,36 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
     }
   }
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: "productImageUrl" | "diagramImageUrl") => {
-    if (!e.target.files?.length) return;
-    const file = e.target.files[0];
+  // Upload a new image for this row and save it on the luminaire. Returns the new URL.
+  const replaceImage = async (file: File, field: ImageFieldKey): Promise<string | null> => {
     const formData = new FormData();
     formData.append("file", file);
     try {
       const res = await apiFetch(`/api/luminaires/${item.id}/designer-assets`, { method: "POST", body: formData });
-      if (res.ok) {
-        const data = await res.json();
-        handleFieldSave(field, data.imageUrl);
-      }
-    } catch (err) { console.error(err); }
-    finally { e.target.value = ""; }
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (typeof data.imageUrl !== "string" || !data.imageUrl) return null;
+      await handleFieldSave(field, data.imageUrl);
+      return data.imageUrl as string;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: ImageFieldKey) => {
+    if (!e.target.files?.length) return;
+    const file = e.target.files[0];
+    e.target.value = "";
+    await replaceImage(file, field);
   };
 
   async function handleExport() {
-    const tid = local.pdfTemplate;
-    if (!tid || tid === "modern" || tid === "compact" || tid === "detailed") {
-      alert("Please select a custom template first.");
+    const projectDefault = templates.find((template) => template.isDefault);
+    const selectedId = String(local.pdfTemplate || "").match(/^\d+$/) ? local.pdfTemplate : projectDefault?.id;
+    const tid = selectedId?.toString();
+    if (!tid) {
+      alert("No PDF template is available for this project.");
       return;
     }
     setIsExporting(true);
@@ -499,7 +540,7 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minHeight: "54px", paddingLeft: "8px" }}>
             {local.productImageUrl ? (
-              <img src={local.productImageUrl} alt="product" className="thumb" onClick={() => setLightboxUrl(local.productImageUrl)} />
+              <img src={local.productImageUrl} alt="product" className="thumb" onClick={() => local.productImageUrl && setLightbox({ field: "productImageUrl", url: local.productImageUrl })} />
             ) : <span className="muted">—</span>}
             <label className="upload-overlay" title="Upload Photo"><Upload size={14} /><input type="file" hidden accept="image/*" onChange={(e) => handleImageUpload(e, "productImageUrl")} /></label>
           </div>
@@ -508,7 +549,7 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minHeight: "54px", paddingLeft: "8px" }}>
             {local.diagramImageUrl ? (
-              <img src={local.diagramImageUrl} alt="diagram" className="thumb" onClick={() => setLightboxUrl(local.diagramImageUrl)} />
+              <img src={local.diagramImageUrl} alt="diagram" className="thumb" onClick={() => local.diagramImageUrl && setLightbox({ field: "diagramImageUrl", url: local.diagramImageUrl })} />
             ) : <span className="muted">—</span>}
             <label className="upload-overlay" title="Upload Diagram"><Upload size={14} /><input type="file" hidden accept="image/*" onChange={(e) => handleImageUpload(e, "diagramImageUrl")} /></label>
           </div>
@@ -517,14 +558,15 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minHeight: "54px", paddingLeft: "8px" }}>
             {local.polarImageUrl ? (
-              <img src={local.polarImageUrl} alt="polar curve" className="thumb" onClick={() => setLightboxUrl(local.polarImageUrl)} />
+              <img src={local.polarImageUrl} alt="polar curve" className="thumb" onClick={() => local.polarImageUrl && setLightbox({ field: "polarImageUrl", url: local.polarImageUrl })} />
             ) : <span className="muted">—</span>}
+            <label className="upload-overlay" title="Upload Polar Curve"><Upload size={14} /><input type="file" hidden accept="image/png,image/jpeg,image/webp" onChange={(e) => handleImageUpload(e, "polarImageUrl")} /></label>
           </div>
         );
       case "manufacturer": return <EditableCell value={local.manufacturer} onSave={(v) => handleFieldSave("manufacturer", v)} />;
       case "product": return <EditableCell value={local.product} onSave={(v) => handleFieldSave("product", v)} />;
       case "specCode": return <EditableCell value={local.specCode} onSave={(v) => handleFieldSave("specCode", v)} />;
-      case "description": return <EditableCell value={local.description} onSave={(v) => handleFieldSave("description", v)} />;
+      case "description": return <EditableCell value={local.description} onSave={(v) => handleFieldSave("description", v)} highlightOptions={false} />;
       case "colour": return <EditableCell value={local.colour} onSave={(v) => handleFieldSave("colour", v)} />;
       case "cct": return <EditableCell value={local.cct} onSave={(v) => handleFieldSave("cct", v)} />;
       case "cri": return <EditableCell value={local.cri} onSave={(v) => handleFieldSave("cri", v)} />;
@@ -532,18 +574,23 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
       case "dimming": return <EditableCell value={local.dimming} onSave={(v) => handleFieldSave("dimming", v)} />;
       case "quantity": return <EditableCell value={local.quantity} onSave={(v) => handleFieldSave("quantity", v)} />;
       case "ipRating": return <EditableCell value={local.ipRating} onSave={(v) => handleFieldSave("ipRating", v)} />;
-      case "totalWatts": return <EditableCell value={local.totalWatts} onSave={(v) => handleFieldSave("totalWatts", v)} />;
-      case "document": return local.sourceUrl ? <a href={local.sourceUrl} target="_blank" rel="noreferrer" className="doc-link">Open PDF</a> : <span className="muted">—</span>;
-      case "templatePdf":
+      case "totalWatts": return <EditableCell value={local.totalWatts} onSave={() => {}} readOnly />;
+      case "document": return local.sourceUrl ? <a href={local.sourceUrl} target="_blank" rel="noreferrer" className="doc-link">{local.sourceType === "webpage" ? "Open Page" : "Open PDF"}</a> : <span className="muted">—</span>;
+      case "templatePdf": {
+        const projectDefault = templates.find((template) => template.isDefault);
+        const selectedTemplateValue = /^\d+$/.test(String(local.pdfTemplate || ""))
+          ? String(local.pdfTemplate)
+          : projectDefault?.id?.toString() || "";
         return (
           <div style={{ display: "flex", gap: "8px", alignItems: "center", padding: "0 12px" }}>
-            <select className="template-select" value={local.pdfTemplate || ""} onChange={(e) => handleFieldSave("pdfTemplate", e.target.value)}>
+            <select className="template-select" value={selectedTemplateValue} onChange={(e) => handleFieldSave("pdfTemplate", e.target.value)}>
               <option value="">Select Template</option>
-              {templates.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+              {templates.map((t) => <option key={t.id} value={t.id}>{t.name}{t.isDefault ? " (Default)" : ""}</option>)}
             </select>
             <button className="print-btn" disabled={isExporting} onClick={handleExport}>{isExporting ? "..." : "Download PDF"}</button>
           </div>
         );
+      }
       default: return <span className="muted">—</span>;
     }
   };
@@ -575,7 +622,12 @@ function TableRow({ item, index, columns, onEdit, onDeleteRow, templates, active
           </button>
         </td>
       </tr>
-      <Lightbox imageUrl={lightboxUrl} onClose={() => setLightboxUrl(null)} />
+      <Lightbox
+        imageUrl={lightbox?.url || null}
+        title={lightbox?.field === "diagramImageUrl" ? "Diagram" : lightbox?.field === "polarImageUrl" ? "Polar Curve" : "Photo"}
+        onClose={() => setLightbox(null)}
+        onReplace={lightbox ? (file) => replaceImage(file, lightbox.field) : undefined}
+      />
     </>
   );
 }
@@ -669,10 +721,12 @@ export default function LuminaireTable({
   const [selectedRowIds, setSelectedRowIds] = useState<Set<number>>(new Set());
   const [bulkTemplateId, setBulkTemplateId] = useState("");
   const [isBulkExporting, setIsBulkExporting] = useState(false);
+  const [scheduleExportFormat, setScheduleExportFormat] = useState<"excel" | "pdf" | null>(null);
   
   const [draggedKey, setDraggedKey] = useState<string | null>(null);
   const [dragOverKey, setDragOverKey] = useState<string | null>(null);
-  const [activePopover, setActivePopover] = useState<"filter" | "sort" | "columns" | "rowHeight" | null>(null);
+  const [activePopover, setActivePopover] = useState<"filter" | "sort" | "columns" | "rowHeight" | "export" | null>(null);
+  const columnsPopoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (activeProjectId === null) return;
@@ -683,6 +737,46 @@ export default function LuminaireTable({
     };
     fetchTemplates();
   }, [activeProjectId]);
+
+  useEffect(() => {
+    setSelectedRowIds(new Set());
+    setBulkTemplateId("");
+    setCurrentPage(1);
+    setActivePopover(null);
+  }, [activeProjectId]);
+
+  useEffect(() => {
+    if (activePopover !== "columns") return;
+
+    const closeColumnsPopoverOnOutsideClick = (event: MouseEvent) => {
+      if (
+        columnsPopoverRef.current
+        && !columnsPopoverRef.current.contains(event.target as Node)
+      ) {
+        setActivePopover(null);
+      }
+    };
+
+    document.addEventListener("mousedown", closeColumnsPopoverOnOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", closeColumnsPopoverOnOutsideClick);
+    };
+  }, [activePopover]);
+
+  useEffect(() => {
+    setSelectedRowIds((prev) => {
+      const validIds = new Set(items.map((item) => item.id));
+      let changed = false;
+      const next = new Set<number>();
+
+      prev.forEach((id) => {
+        if (validIds.has(id)) next.add(id);
+        else changed = true;
+      });
+
+      return changed ? next : prev;
+    });
+  }, [items]);
 
   // Bulk export handler — calls backend to generate a single multi-page PDF
   const handleBulkExport = async () => {
@@ -835,12 +929,38 @@ export default function LuminaireTable({
     return result;
   }, [items, searchTerm, filterConditions, filterLogic, customColumns, filterableColumns, activeSortableSortRules]);
 
+  const selectedItemsInView = React.useMemo(
+    () => processedItems.filter((item) => selectedRowIds.has(item.id)),
+    [processedItems, selectedRowIds]
+  );
+
+  const exportScopeItems = React.useMemo(
+    () => (selectedItemsInView.length > 0 ? selectedItemsInView : processedItems),
+    [processedItems, selectedItemsInView]
+  );
+
+  const exportScopeLabel = selectedItemsInView.length > 0
+    ? `${selectedItemsInView.length} selected row${selectedItemsInView.length === 1 ? "" : "s"}`
+    : `${processedItems.length} row${processedItems.length === 1 ? "" : "s"} in the current schedule`;
+
   const paginatedItems = React.useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return processedItems.slice(start, start + itemsPerPage);
   }, [processedItems, currentPage, itemsPerPage]);
 
   const totalPages = Math.ceil(processedItems.length / itemsPerPage);
+  const allProcessedRowsSelected = processedItems.length > 0 && processedItems.every((item) => selectedRowIds.has(item.id));
+  const someProcessedRowsSelected = processedItems.some((item) => selectedRowIds.has(item.id));
+
+  useEffect(() => {
+    if (totalPages === 0 && currentPage !== 1) {
+      setCurrentPage(1);
+      return;
+    }
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const handleDrop = (targetKey: string) => {
     if (!draggedKey || draggedKey === targetKey) {
@@ -890,6 +1010,61 @@ export default function LuminaireTable({
       aiDescription: editingColumnDraft.aiDescription.trim(),
     });
     setEditingCustomColumn(null);
+  };
+
+  const handleScheduleExport = async (format: "excel" | "pdf") => {
+    if (!activeProjectId) return;
+
+    const exportIds = exportScopeItems.map((item) => item.id);
+    if (exportIds.length === 0) {
+      alert("There are no luminaires available to export.");
+      return;
+    }
+
+    if (visibleColumns.length === 0) {
+      alert("Show at least one column before exporting.");
+      return;
+    }
+
+    setScheduleExportFormat(format);
+    try {
+      const res = await apiFetch(`/api/luminaires/export-schedule?project_id=${activeProjectId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          luminaire_ids: exportIds,
+          column_keys: visibleColumns.map((column) => column.key),
+          column_labels: Object.fromEntries(visibleColumns.map((column) => [column.key, column.label])),
+          export_format: format,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => null);
+        throw new Error(error?.detail || `Failed to export the schedule as ${format.toUpperCase()}.`);
+      }
+
+      const blob = await res.blob();
+      const extension = format === "excel" ? "xlsx" : "pdf";
+      const filename = parseDownloadFilename(
+        res.headers.get("Content-Disposition"),
+        `luminaire-schedule.${extension}`
+      );
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 0);
+      setActivePopover(null);
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Export failed.");
+    } finally {
+      setScheduleExportFormat(null);
+    }
   };
 
   return (
@@ -950,7 +1125,7 @@ export default function LuminaireTable({
               )}
             </div>
 
-            <div className="dropdown-wrapper">
+            <div className="dropdown-wrapper" ref={columnsPopoverRef}>
               <button className="toolbar-btn" onClick={() => setActivePopover(activePopover === "columns" ? null : "columns")}>
                 <Columns3 size={14} /> Columns
               </button>
@@ -990,6 +1165,54 @@ export default function LuminaireTable({
                 </div>
               )}
             </div>
+
+            <div className="dropdown-wrapper">
+              <button
+                className={`toolbar-btn ${activePopover === "export" ? "active" : ""}`}
+                onClick={() => setActivePopover(activePopover === "export" ? null : "export")}
+                disabled={visibleColumns.length === 0 || processedItems.length === 0 || scheduleExportFormat !== null}
+              >
+                <Download size={14} /> Export
+              </button>
+              {activePopover === "export" && (
+                <div className="popover export-popover" onClick={(e) => e.stopPropagation()}>
+                  <div className="popover-header">Export Schedule</div>
+                  <div className="popover-body export-popover-body">
+                    <p className="export-note">
+                      Export uses the columns currently shown in the luminaire schedule. If you have rows selected, only those rows are exported. Otherwise, the full filtered schedule is exported.
+                    </p>
+                    <div className="export-scope-pill">
+                      <span>{exportScopeLabel}</span>
+                      <span>{visibleColumns.length} column{visibleColumns.length === 1 ? "" : "s"} shown</span>
+                    </div>
+                    <div className="export-option-list">
+                      <button
+                        className="export-option-btn"
+                        onClick={() => handleScheduleExport("excel")}
+                        disabled={scheduleExportFormat !== null}
+                      >
+                        <div className="export-option-copy">
+                          <strong>Export Excel</strong>
+                          <span>.xlsx download for the visible schedule view</span>
+                        </div>
+                        {scheduleExportFormat === "excel" ? <span className="export-option-status">Preparing…</span> : <Download size={14} />}
+                      </button>
+                      <button
+                        className="export-option-btn"
+                        onClick={() => handleScheduleExport("pdf")}
+                        disabled={scheduleExportFormat !== null}
+                      >
+                        <div className="export-option-copy">
+                          <strong>Export PDF</strong>
+                          <span>Table-style PDF matching the visible schedule columns</span>
+                        </div>
+                        {scheduleExportFormat === "pdf" ? <span className="export-option-status">Preparing…</span> : <FileText size={14} />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -1005,13 +1228,17 @@ export default function LuminaireTable({
                     type="checkbox"
                     className="row-checkbox"
                     title="Select all"
-                    checked={paginatedItems.length > 0 && paginatedItems.every(i => selectedRowIds.has(i.id))}
-                    ref={el => { if (el) el.indeterminate = paginatedItems.some(i => selectedRowIds.has(i.id)) && !paginatedItems.every(i => selectedRowIds.has(i.id)); }}
+                    checked={allProcessedRowsSelected}
+                    ref={el => { if (el) el.indeterminate = someProcessedRowsSelected && !allProcessedRowsSelected; }}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedRowIds(prev => new Set([...prev, ...paginatedItems.map(i => i.id)]));
+                        setSelectedRowIds(prev => new Set([...prev, ...processedItems.map((item) => item.id)]));
                       } else {
-                        setSelectedRowIds(prev => { const next = new Set(prev); paginatedItems.forEach(i => next.delete(i.id)); return next; });
+                        setSelectedRowIds(prev => {
+                          const next = new Set(prev);
+                          processedItems.forEach((item) => next.delete(item.id));
+                          return next;
+                        });
                       }
                     }}
                   />
@@ -1134,7 +1361,7 @@ export default function LuminaireTable({
             <div className="modal-header">
               <p className="eyebrow">AI Column Setup</p>
               <h2>Add Custom Column</h2>
-              <p>Create a custom field and optionally let AI fill it during PDF extraction.</p>
+              <p>Create a custom field and optionally let AI fill it during PDF or web link extraction.</p>
             </div>
             <form className="modal-form" onSubmit={handleAddNewColumnSubmit}>
               <div className="ai-column-panel">
@@ -1166,7 +1393,7 @@ export default function LuminaireTable({
                   />
                 </label>
                 <p className="ai-column-note">
-                  When AI is enabled, PDF extraction will try to populate this column using your description. If disabled, AI will ignore it.
+                  When AI is enabled, PDF or web link extraction will try to populate this column using your description. If disabled, AI will ignore it.
                 </p>
               </div>
               <div className="actions">

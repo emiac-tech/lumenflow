@@ -3,20 +3,24 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
-import { GoogleLogin } from "@react-oauth/google";
+import AuthLayout from "@/components/AuthLayout";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [studioName, setStudioName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -28,183 +32,103 @@ export default function SignupPage() {
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, invite_code: inviteCode }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          name: name.trim() || undefined,
+          studio_name: studioName.trim() || undefined,
+        }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        login(data.access_token, data.user);
+        if (data.requires_activation) {
+          setSuccess(data.message);
+          setPassword("");
+          setConfirmPassword("");
+        } else {
+          login(data.access_token, data.user);
+        }
       } else {
         const errData = await res.json().catch(() => ({}));
         setError(errData.detail || "Signup failed");
       }
     } catch (err) {
       console.error(err);
-      setError("An unexpected error occurred. Is the backend running?");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSignup = async (credentialResponse: any) => {
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/google", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ credential: credentialResponse.credential }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        login(data.access_token, data.user);
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        setError(errData.detail || "Google signup failed");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("An unexpected error occurred.");
+      setError("We could not reach RISE OS. Please try again in a moment.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: "100vh",
-      width: "100%",
-      background: "var(--body-bg-gradient)",
-      padding: "20px"
-    }}>
-      <div style={{
-        background: "var(--panel)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid var(--line)",
-        padding: "40px",
-        borderRadius: "var(--radius)",
-        boxShadow: "var(--shadow)",
-        width: "100%",
-        maxWidth: "420px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "24px"
-      }}>
-        <div style={{ textAlign: "center" }}>
-          <h2 style={{ fontSize: "28px", fontWeight: "700", marginBottom: "8px" }}>
-            Create an account
-          </h2>
-          <p style={{ color: "var(--muted)", fontSize: "14px" }}>
-            Join LumenFlow to start managing your luminaires
-          </p>
+    <AuthLayout>
+      <p className="rise-eyebrow">Your beta starts here</p>
+      <h2>Make room for your next idea.</h2>
+      <p className="rise-auth-desc">Create your RISE OS workspace. New accounts start with 5 PDF extraction credits.</p>
+
+      {success ? (
+        <div className="rise-auth-form">
+          <div className="rise-auth-msg success" role="status">{success}</div>
+          <Link href="/login" className="primary-button rise-auth-submit">
+            <span>Go to sign in</span>
+            <span aria-hidden>→</span>
+          </Link>
         </div>
-
-        {error && (
-          <div style={{
-            background: "rgba(255, 92, 92, 0.1)",
-            border: "1px solid rgba(255, 92, 92, 0.2)",
-            color: "var(--danger)",
-            padding: "12px 16px",
-            borderRadius: "8px",
-            fontSize: "14px",
-            fontWeight: "500"
-          }}>
-            {error}
+      ) : (
+        <form onSubmit={handleEmailSignup} className="rise-auth-form">
+          {error && <div className="rise-auth-msg error" role="alert">{error}</div>}
+          <label className="field">
+            <span>Your name</span>
+            <input autoComplete="name" placeholder="Your full name" value={name} onChange={(e) => setName(e.target.value)} required />
+          </label>
+          <label className="field">
+            <span>Email address</span>
+            <input type="email" autoComplete="email" placeholder="you@studio.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </label>
+          <label className="field">
+            <span>Business or studio name <em>(optional)</em></span>
+            <input autoComplete="organization" placeholder="Your business or studio" value={studioName} onChange={(e) => setStudioName(e.target.value)} />
+          </label>
+          <div className="field">
+            <label htmlFor="rise-password"><span>Create a password</span></label>
+            <div className="rise-pw">
+              <input
+                id="rise-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="Choose a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? "Hide password" : "Show password"}>
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-        )}
-
-        <form onSubmit={handleEmailSignup} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <label className="field">
-            <span>Email Address</span>
+            <span>Confirm password</span>
             <input
-              type="email"
-              placeholder="user@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-          <label className="field">
-            <span>Password</span>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          <label className="field">
-            <span>Confirm Password</span>
-            <input
-              type="password"
-              placeholder="••••••••"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Type it again"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
           </label>
-          <label className="field">
-            <span>Invite Code</span>
-            <input
-              type="text"
-              placeholder="TRIAL10, PRO100..."
-              value={inviteCode}
-              onChange={(e) => setInviteCode(e.target.value)}
-              required
-            />
-          </label>
-
-          <button 
-            type="submit" 
-            className="primary-button" 
-            disabled={loading}
-            style={{ width: "100%", marginTop: "8px", justifyContent: "center" }}
-          >
-            {loading ? "Signing up..." : "Sign up"}
+          <button type="submit" className="primary-button rise-auth-submit" disabled={loading}>
+            <span>{loading ? "Creating your workspace…" : "Create account & open OS"}</span>
+            <span aria-hidden>→</span>
           </button>
         </form>
+      )}
 
-        <div style={{ position: "relative", textAlign: "center", margin: "8px 0" }}>
-          <div style={{ position: "absolute", top: "50%", left: 0, right: 0, borderTop: "1px solid var(--line)", zIndex: 1 }}></div>
-          <span style={{ 
-            position: "relative", 
-            background: "var(--panel)", 
-            padding: "0 12px", 
-            color: "var(--muted)", 
-            fontSize: "12px",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            zIndex: 2 
-          }}>
-            Or sign up with
-          </span>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <GoogleLogin
-            onSuccess={handleGoogleSignup}
-            onError={() => setError("Google Signup Failed")}
-            theme="filled_black"
-          />
-        </div>
-
-        <div style={{ textAlign: "center", fontSize: "14px", color: "var(--muted)", marginTop: "16px" }}>
-          Already have an account?{" "}
-          <Link href="/login" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: "600" }}>
-            Sign in
-          </Link>
-        </div>
+      <div className="rise-auth-switch">
+        Already have an account? <Link href="/login">Sign in →</Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

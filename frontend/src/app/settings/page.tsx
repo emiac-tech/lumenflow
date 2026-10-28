@@ -25,6 +25,11 @@ export default function SettingsPage() {
   const [companyNameInput, setCompanyNameInput] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [locationCountry, setLocationCountry] = useState("");
+  const [revision, setRevision] = useState("A (Current)");
+  const [issueDate, setIssueDate] = useState("");
+  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   const fetchSettings = async () => {
     if (activeProjectId === null) return;
@@ -33,6 +38,14 @@ export default function SettingsPage() {
       const data = await res.json();
       setItems(data.items || []);
       if (data.companyName) setCompanyNameInput(data.companyName);
+      const specRes = await apiFetch(`/api/projects/${activeProjectId}/specification-settings`);
+      if (specRes.ok) {
+        const spec = await specRes.json();
+        setLogoUrl(spec.logoUrl || "");
+        setLocationCountry(spec.locationCountry || "");
+        setRevision(spec.revision || "A (Current)");
+        setIssueDate(spec.issueDate || "");
+      }
     } catch (err) {
       console.error("Failed to fetch settings", err);
     }
@@ -62,18 +75,50 @@ export default function SettingsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (res.ok) {
+      const specRes = await apiFetch(`/api/projects/${activeProjectId}/specification-settings`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locationCountry, revision, issueDate }),
+      });
+      if (res.ok && specRes.ok) {
         if (companyNameInput.trim()) setCompanyName(companyNameInput.trim());
         setApiKey("");
         fetchSettings();
         setSaveMsg("Settings saved successfully!");
         setTimeout(() => setSaveMsg(""), 3000);
+      } else {
+        const error = !specRes.ok ? await specRes.json().catch(() => ({})) : {};
+        setSaveMsg(error.detail || "Failed to save settings");
       }
     } catch (err) {
       console.error(err);
       setSaveMsg("Failed to save settings");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeProjectId === null || !event.target.files?.length) return;
+    const form = new FormData();
+    form.append("file", event.target.files[0]);
+    setUploadingLogo(true);
+    setSaveMsg("");
+    try {
+      const res = await apiFetch(`/api/projects/${activeProjectId}/specification-logo`, {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Logo upload failed");
+      setLogoUrl(data.logoUrl || "");
+      setSaveMsg("Project logo updated.");
+      setTimeout(() => setSaveMsg(""), 3000);
+    } catch (error) {
+      setSaveMsg(error instanceof Error ? error.message : "Logo upload failed");
+    } finally {
+      setUploadingLogo(false);
+      event.target.value = "";
     }
   };
 
@@ -85,7 +130,7 @@ export default function SettingsPage() {
       <main className="main">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Application Settings</p>
+            <p className="eyebrow">Setup / Studio configuration</p>
             <h1>Configuration</h1>
           </div>
         </header>
@@ -104,6 +149,37 @@ export default function SettingsPage() {
                   onChange={(e) => setCompanyNameInput(e.target.value)}
                 />
                 <small>Shown in the sidebar across all pages of the application.</small>
+              </div>
+            </div>
+          </section>
+
+          <section className="status-bar" style={{ display: "block", marginBottom: 16 }}>
+            <h2 style={{ fontSize: 18, marginBottom: 4 }}>Specification Sheet Defaults</h2>
+            <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 16 }}>
+              These values and the logo are applied dynamically to this project&apos;s default PDF template.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "180px minmax(180px, 1fr) minmax(160px, 0.7fr) minmax(160px, 0.7fr)", gap: 16, alignItems: "end" }}>
+              <div className="field">
+                <span>Project Logo</span>
+                <div style={{ height: 86, border: "1px solid var(--line)", borderRadius: 8, background: "white", display: "flex", alignItems: "center", justifyContent: "center", padding: 8, marginBottom: 8 }}>
+                  {logoUrl ? <img src={logoUrl} alt="Project logo" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} /> : <small>No logo configured</small>}
+                </div>
+                <label className="ghost-button" style={{ cursor: "pointer", textAlign: "center" }}>
+                  {uploadingLogo ? "Uploading..." : "Upload Logo"}
+                  <input type="file" hidden accept="image/png,image/jpeg,image/webp" disabled={uploadingLogo} onChange={handleLogoUpload} />
+                </label>
+              </div>
+              <div className="field">
+                <span>Location / Country</span>
+                <input value={locationCountry} onChange={(e) => setLocationCountry(e.target.value)} placeholder="e.g. London, United Kingdom" />
+              </div>
+              <div className="field">
+                <span>Revision</span>
+                <input value={revision} onChange={(e) => setRevision(e.target.value)} placeholder="A (Current)" />
+              </div>
+              <div className="field">
+                <span>Issue Date</span>
+                <input type="date" value={issueDate} onChange={(e) => setIssueDate(e.target.value)} />
               </div>
             </div>
           </section>

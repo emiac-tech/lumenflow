@@ -6,9 +6,10 @@ import { TemplateProvider } from "@/components/TemplateContext";
 import { AuthProvider } from "@/components/AuthContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
+import "./rise.css";
 
 export const metadata: Metadata = {
-  title: "LumenFlow — Luminaire Manager",
+  title: "RISE OS — Lighting Workflows",
   description:
     "Upload luminaire PDF spec sheets, extract product images and diagrams automatically, and manage your lighting project schedule.",
 };
@@ -20,8 +21,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+      <body suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
           <GoogleOAuthProvider clientId="1022130386766-3tsh8727j4eb72mcv76326qf04c6eib7.apps.googleusercontent.com">
             <AuthProvider>
               <BrandProvider>

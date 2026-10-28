@@ -5,9 +5,16 @@ import { apiFetch } from "@/utils/api";
 import { useAuth } from "./AuthContext";
 import { usePathname } from "next/navigation";
 
-interface Project {
+export interface Project {
   id: number;
   name: string;
+  createdAt?: string;
+  luminaireCount?: number;
+  documentCount?: number;
+  location?: string;
+  revision?: string;
+  template?: "standard" | "compact";
+  studioName?: string;
 }
 
 interface ProjectContextValue {
@@ -16,7 +23,7 @@ interface ProjectContextValue {
   setActiveProjectId: (id: number) => void;
   isLoading: boolean;
   refreshProjects: () => Promise<void>;
-  addProject: (name: string) => Promise<Project | null>;
+  addProject: (name: string, location: string, extra?: { revision?: string; issueDate?: string }) => Promise<Project | null>;
   renameProject: (id: number, name: string) => Promise<Project | null>;
   deleteProject: (id: number) => Promise<boolean>;
 }
@@ -124,12 +131,12 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("activeProjectId", id.toString());
   };
 
-  const addProject = async (name: string) => {
+  const addProject = async (name: string, location: string, extra?: { revision?: string; issueDate?: string }) => {
     try {
       const res = await apiFetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, location, revision: extra?.revision, issueDate: extra?.issueDate, source_project_id: activeProjectId }),
       });
       if (res.ok) {
         const newProject = await res.json();
@@ -152,7 +159,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       });
       if (res.ok) {
         const updatedProject = await res.json();
-        setProjects((prev) => prev.map((project) => (project.id === id ? updatedProject : project)));
+        setProjects((prev) => prev.map((project) => (project.id === id ? { ...project, ...updatedProject } : project)));
         return updatedProject;
       }
     } catch (err) {
