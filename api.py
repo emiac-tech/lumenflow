@@ -41,7 +41,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.utils import ImageReader, simpleSplit
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Image as RLImage
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from datetime import datetime, timedelta
 from sqlalchemy import JSON, DateTime, ForeignKey, String, func
 from sqlalchemy.orm import relationship
@@ -1201,6 +1201,11 @@ def ensure_project_specification_columns(db: Session, project_id: int) -> list[C
     }
     saved_order = get_saved_column_order(db, project_id)
     changed_order = False
+    if not saved_order and not existing_columns:
+        # Brand-new project: core columns (Type, Photo, ...) first, specification
+        # columns after them, matching the established project layout.
+        saved_order = list(SCHEDULE_EXPORT_LABELS.keys())
+        changed_order = True
     ensured: list[CustomColumn] = []
 
     for specification in DEFAULT_SPECIFICATION_COLUMNS:
@@ -1980,17 +1985,27 @@ def build_schedule_export_title(project_name: str) -> str:
     return f"{(project_name or '').strip() or 'Project'} - Luminaire Schedule"
 
 
-def get_schedule_brand_logo_asset_path() -> Optional[Path]:
-    if not SCHEDULE_BRAND_LOGO_SOURCE_PATH.exists():
+def get_schedule_brand_logo_asset_path(source_path: Optional[Path] = None) -> Optional[Path]:
+    source_path = source_path or SCHEDULE_BRAND_LOGO_SOURCE_PATH
+    if not source_path.exists():
         return None
+    if source_path == SCHEDULE_BRAND_LOGO_SOURCE_PATH:
+        export_path = SCHEDULE_BRAND_LOGO_EXPORT_PATH
+    else:
+        export_path = BRANDING_DIR / f"schedule-{source_path.stem}.png"
+        try:
+            if export_path.exists() and export_path.stat().st_mtime >= source_path.stat().st_mtime:
+                return export_path
+        except OSError:
+            pass
 
     try:
         from PIL import Image, ImageChops
     except ImportError:
-        return SCHEDULE_BRAND_LOGO_SOURCE_PATH
+        return source_path
 
     try:
-        with Image.open(SCHEDULE_BRAND_LOGO_SOURCE_PATH) as source_image:
+        with Image.open(source_path) as source_image:
             source_image.load()
             logo_image = source_image.convert("RGBA")
             flattened_logo = Image.alpha_composite(
@@ -2018,15 +2033,47 @@ def get_schedule_brand_logo_asset_path() -> Optional[Path]:
                 prepared_logo = flattened_logo.crop(crop_box)
             else:
                 prepared_logo = flattened_logo
-            prepared_logo.save(SCHEDULE_BRAND_LOGO_EXPORT_PATH)
+            prepared_logo.save(export_path)
     except Exception:
-        return SCHEDULE_BRAND_LOGO_SOURCE_PATH
+        return source_path
 
-    return SCHEDULE_BRAND_LOGO_EXPORT_PATH
+    return export_path
 
 
-def get_schedule_brand_logo(max_width: float, max_height: float) -> Optional[tuple[Path, int, int]]:
-    logo_path = get_schedule_brand_logo_asset_path()
+def get_schedule_brand(db: Session, project_id: int) -> dict:
+    """Logo / studio name / accent used on schedule exports for one project.
+
+    Uses the project's own logo when set. Projects that hide the legacy default
+    logo (client projects without a logo) get no logo, never the Afterglow one.
+    """
+    logo_source: Optional[Path] = None
+    configured_path = get_setting(db, "specification_logo_path", "", project_id=project_id)
+    if configured_path and (DATA_DIR / configured_path).exists():
+        logo_source = DATA_DIR / configured_path
+    elif get_setting(db, "brand_hide_default_logo", "", project_id=project_id) != "1":
+        logo_source = SCHEDULE_BRAND_LOGO_SOURCE_PATH
+    accent = normalize_accent(get_setting(db, "brand_accent", "", project_id=project_id))
+    return {
+        "logo_source": logo_source,
+        "use_logo": logo_source is not None,
+        "studio_name": (get_setting(db, "brand_studio_name", "", project_id=project_id) or "").strip(),
+        "accent": accent or "",
+    }
+
+
+def schedule_header_hex(brand: Optional[dict]) -> str:
+    accent = (brand or {}).get("accent") or ""
+    return accent.lstrip("#").upper() if accent else "0B1C31"
+
+
+def get_schedule_brand_logo(
+    max_width: float,
+    max_height: float,
+    brand: Optional[dict] = None,
+) -> Optional[tuple[Path, int, int]]:
+    if brand is not None and not brand.get("use_logo"):
+        return None
+    logo_path = get_schedule_brand_logo_asset_path((brand or {}).get("logo_source"))
     if not logo_path:
         return None
 
@@ -2044,7 +2091,7 @@ def get_schedule_brand_logo(max_width: float, max_height: float) -> Optional[tup
     return logo_path, width, height
 
 
-def build_schedule_excel_export(path: Path, project_name: str, rows: list[dict]) -> None:
+def build_schedule_excel_export(path: Path, project_name: str, rows: list[dict], brand: Optional[dict] = None) -> None:
     try:
         from openpyxl import Workbook
         from openpyxl.drawing.image import Image as XLImage
@@ -2061,15 +2108,16 @@ def build_schedule_excel_export(path: Path, project_name: str, rows: list[dict])
     sheet.title = "Schedule"
     sheet.sheet_view.showGridLines = False
 
-    header_fill = PatternFill(fill_type="solid", fgColor="0B1C31")
+    header_fill = PatternFill(fill_type="solid", fgColor=schedule_header_hex(brand))
     header_font = Font(color="FFFFFF", bold=True)
     body_alignment = Alignment(vertical="top", wrap_text=True)
     thin_side = Side(style="thin", color="D5DEEA")
     border = Border(left=thin_side, right=thin_side, top=thin_side, bottom=thin_side)
 
     headers = rows[0]["cells"] if rows else []
-    logo = get_schedule_brand_logo(max_width=128, max_height=56)
+    logo = get_schedule_brand_logo(max_width=128, max_height=56, brand=brand)
     title = build_schedule_export_title(project_name)
+    studio_name = (brand or {}).get("studio_name") or ""
     header_row_index = 3
     data_start_row_index = header_row_index + 1
 
@@ -2093,9 +2141,12 @@ def build_schedule_excel_export(path: Path, project_name: str, rows: list[dict])
     title_cell = sheet.cell(row=1, column=title_column_index, value=title)
     title_cell.font = Font(color="0F172A", bold=True, size=18)
     title_cell.alignment = Alignment(vertical="center")
+    if studio_name:
+        studio_cell = sheet.cell(row=2, column=title_column_index, value=studio_name)
+        studio_cell.font = Font(color="475569", size=10)
 
     sheet.row_dimensions[1].height = max(56, (logo[2] + 8) if logo else 56)
-    sheet.row_dimensions[2].height = 12
+    sheet.row_dimensions[2].height = 16 if studio_name else 12
     sheet.freeze_panes = f"A{data_start_row_index}"
 
     for column_index, cell in enumerate(headers, start=1):
@@ -2140,7 +2191,23 @@ def build_schedule_excel_export(path: Path, project_name: str, rows: list[dict])
     workbook.save(path)
 
 
-def build_schedule_pdf_export(path: Path, project_name: str, rows: list[dict]) -> None:
+def split_schedule_column_groups(widths: list[float], available: float, minimums: list[float]) -> list[list[int]]:
+    """Split column indexes into page-width groups so no column is clipped."""
+    groups: list[list[int]] = []
+    current: list[int] = []
+    used = 0.0
+    for index, minimum in enumerate(minimums):
+        if current and used + minimum > available:
+            groups.append(current)
+            current, used = [], 0.0
+        current.append(index)
+        used += minimum
+    if current:
+        groups.append(current)
+    return groups or [[]]
+
+
+def build_schedule_pdf_export(path: Path, project_name: str, rows: list[dict], brand: Optional[dict] = None) -> None:
     page_size = landscape(A3)
     document = SimpleDocTemplate(
         str(path),
@@ -2179,7 +2246,11 @@ def build_schedule_pdf_export(path: Path, project_name: str, rows: list[dict]) -
     )
 
     title_text = escape(build_schedule_export_title(project_name))
-    logo = get_schedule_brand_logo(max_width=128, max_height=56)
+    studio_name = (brand or {}).get("studio_name") or ""
+    if studio_name:
+        title_text += f'<br/><font size="9" color="#475569">{escape(studio_name)}</font>'
+    header_color = colors.HexColor("#" + schedule_header_hex(brand))
+    logo = get_schedule_brand_logo(max_width=128, max_height=56, brand=brand)
     elements = []
     if logo:
         logo_path, logo_width, logo_height = logo
@@ -2199,35 +2270,67 @@ def build_schedule_pdf_export(path: Path, project_name: str, rows: list[dict]) -
         elements.extend([Paragraph(title_text, title_style), Spacer(1, 12)])
 
     headers = rows[0]["cells"] if rows else []
+    image_keys = {"photo", "diagram", "polar"}
     raw_widths = [schedule_column_width(cell["key"]) for cell in headers]
-    total_width = sum(raw_widths) or 1
+    minimums = [54 if cell["key"] in image_keys else 64 for cell in headers]
     available_width = document.width
-    if total_width > available_width:
-        scale = available_width / total_width
-        column_widths = []
-        for cell, width in zip(headers, raw_widths):
-            minimum = 54 if cell["key"] in {"photo", "diagram"} else 48
-            column_widths.append(max(minimum, width * scale))
+    # Wide schedules are split into column groups (each a full-width table with a
+    # row-number column) instead of being clipped at the page edge.
+    ref_width = 26
+    if sum(raw_widths) <= available_width:
+        groups = [list(range(len(headers)))]
+    elif sum(minimums) <= available_width:
+        groups = [list(range(len(headers)))]
     else:
-        column_widths = raw_widths
+        groups = split_schedule_column_groups(raw_widths, available_width - ref_width, minimums)
+    multi_group = len(groups) > 1
 
-    table_rows = [[Paragraph(escape(cell["label"]), header_style) for cell in headers]]
-    for row in rows:
-        current_row = []
-        for cell in row["cells"]:
-            image_path = cell["image_path"]
-            if image_path:
-                try:
-                    current_row.append(RLImage(str(image_path), width=42, height=42))
-                    continue
-                except Exception:
-                    pass
-            current_row.append(Paragraph(escape(cell["text"]).replace("\n", "<br/>"), body_style))
-        table_rows.append(current_row)
+    def fit_widths(indexes: list[int], room: float) -> list[float]:
+        widths = [raw_widths[i] for i in indexes]
+        total = sum(widths) or 1
+        if total > room:
+            mins = [minimums[i] for i in indexes]
+            spare = max(room - sum(mins), 0)
+            extra = [max(w - m, 0) for w, m in zip(widths, mins)]
+            extra_total = sum(extra) or 1
+            return [m + spare * e / extra_total for m, e in zip(mins, extra)]
+        return widths
 
+    def cell_flowable(cell: dict):
+        image_path = cell["image_path"]
+        if image_path:
+            try:
+                return RLImage(str(image_path), width=42, height=42)
+            except Exception:
+                pass
+        return Paragraph(escape(cell["text"]).replace("\n", "<br/>"), body_style)
+
+    for group_number, indexes in enumerate(groups, start=1):
+        if multi_group:
+            caption = f"Part {group_number} of {len(groups)} \u00b7 {headers[indexes[0]]['label']} \u2192 {headers[indexes[-1]]['label']}"
+            elements.append(Paragraph(escape(caption), ParagraphStyle(
+                "ScheduleGroupCaption", parent=body_style, fontName="Helvetica-Bold", fontSize=9, leading=12,
+                textColor=colors.HexColor("#475569"), spaceAfter=4,
+            )))
+            column_widths = [ref_width] + fit_widths(indexes, available_width - ref_width)
+            table_rows = [[Paragraph("#", header_style)] + [Paragraph(escape(headers[i]["label"]), header_style) for i in indexes]]
+            for row_number, row in enumerate(rows, start=1):
+                table_rows.append([Paragraph(str(row_number), body_style)] + [cell_flowable(row["cells"][i]) for i in indexes])
+        else:
+            column_widths = fit_widths(indexes, available_width)
+            table_rows = [[Paragraph(escape(headers[i]["label"]), header_style) for i in indexes]]
+            for row in rows:
+                table_rows.append([cell_flowable(row["cells"][i]) for i in indexes])
+        elements.append(_styled_schedule_table(table_rows, column_widths, header_color))
+        if multi_group and group_number < len(groups):
+            elements.append(PageBreak())
+    document.build(elements)
+
+
+def _styled_schedule_table(table_rows: list, column_widths: list[float], header_color) -> "Table":
     schedule_table = Table(table_rows, colWidths=column_widths, repeatRows=1)
     schedule_table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0B1C31")),
+        ("BACKGROUND", (0, 0), (-1, 0), header_color),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("ALIGN", (0, 0), (-1, 0), "LEFT"),
@@ -2239,8 +2342,7 @@ def build_schedule_pdf_export(path: Path, project_name: str, rows: list[dict]) -
         ("TOPPADDING", (0, 0), (-1, -1), 6),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
     ]))
-    elements.append(schedule_table)
-    document.build(elements)
+    return schedule_table
 
 
 def save_upload(file: UploadFile) -> tuple[Path, str]:
@@ -3563,13 +3665,14 @@ async def api_export_schedule(
         timestamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
         base_name = f"{sanitize_export_filename_part(project.name)}-luminaire-schedule-{timestamp}"
 
+        schedule_brand = get_schedule_brand(db, project_id)
         if payload.export_format == "excel":
             export_path = EXPORTS_DIR / f"{base_name}.xlsx"
-            build_schedule_excel_export(export_path, project.name, export_rows)
+            build_schedule_excel_export(export_path, project.name, export_rows, schedule_brand)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         else:
             export_path = EXPORTS_DIR / f"{base_name}.pdf"
-            build_schedule_pdf_export(export_path, project.name, export_rows)
+            build_schedule_pdf_export(export_path, project.name, export_rows, schedule_brand)
             media_type = "application/pdf"
 
         # Record the schedule so it appears in Documentation.
