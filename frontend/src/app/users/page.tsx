@@ -27,7 +27,13 @@ interface UserRecord {
   inviteCodeId: number | null;
   inviteTokenAmount: number | null;
   createdAt: string;
+  creditsExpireAt?: string | null;
+  creditsExpired?: boolean;
+  activationEmail?: "sent" | "not_configured" | "failed";
 }
+
+const formatShortDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
 export default function UsersPage() {
   const { user } = useAuth();
@@ -138,7 +144,18 @@ export default function UsersPage() {
       }
       const updated: UserRecord = await res.json();
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
-      setSuccess(`${updated.email} is now ${updated.isActive ? "active" : "inactive"}.`);
+      const emailNote =
+        updated.activationEmail === "sent"
+          ? " Activation email sent."
+          : updated.activationEmail === "not_configured"
+            ? " Activation email not sent: email sending is not set up yet."
+            : updated.activationEmail === "failed"
+              ? " Activation email could not be sent."
+              : "";
+      const allowance = updated.isActive && updated.creditsExpireAt
+        ? ` ${updated.tokens} credits, valid until ${formatShortDate(updated.creditsExpireAt)}.`
+        : "";
+      setSuccess(`${updated.email} is now ${updated.isActive ? "active" : "inactive"}.${allowance}${emailNote}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error");
     } finally {
@@ -257,11 +274,14 @@ export default function UsersPage() {
                             <span style={{ fontWeight: 700, color: u.tokens === 0 ? "var(--danger)" : "var(--foreground)" }}>
                               {u.tokens}
                             </span>
-                            {u.tokens === 0 && (
+                            {(u.tokens === 0 || u.creditsExpired) && (
                               <span style={{
                                 fontSize: 9, background: "var(--danger)", color: "white",
                                 padding: "1px 5px", borderRadius: 8, fontWeight: 700,
-                              }}>EXPIRED</span>
+                              }}>{u.creditsExpired ? "EXPIRED" : "USED UP"}</span>
+                            )}
+                            {u.creditsExpireAt && !u.creditsExpired && (
+                              <span style={{ fontSize: 11, color: "var(--muted)" }}>until {formatShortDate(u.creditsExpireAt)}</span>
                             )}
                           </div>
                         )}

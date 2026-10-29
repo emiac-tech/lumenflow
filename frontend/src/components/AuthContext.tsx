@@ -13,6 +13,8 @@ export interface User {
   isActive: boolean;
   name?: string | null;
   studioName?: string | null;
+  creditsExpireAt?: string | null;
+  creditsExpired?: boolean;
 }
 
 interface AuthContextType {

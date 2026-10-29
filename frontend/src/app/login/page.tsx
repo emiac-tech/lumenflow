@@ -45,7 +45,23 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      story={
+        <>
+          <p className="rise-eyebrow">Design More. Admin Less.</p>
+          <h1 className="rise-auth2-headline">
+            Lighting workflow automation.
+            <span>Built around your studio.</span>
+          </h1>
+          <p className="rise-auth-tag">Your expertise, augmented by AI.</p>
+          <ul className="rise-auth2-priorities">
+            <li>Your templates.</li>
+            <li>Your workflow.</li>
+            <li>Your data requirements.</li>
+          </ul>
+        </>
+      }
+    >
       <p className="rise-eyebrow">Welcome back</p>
       <h2>Back to your design work.</h2>
       <p className="rise-auth-desc">Sign in to your RISE OS workspace.</p>
@@ -57,7 +73,7 @@ export default function LoginPage() {
           <input
             type="email"
             autoComplete="email"
-            placeholder="you@studio.com"
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -81,15 +97,13 @@ export default function LoginPage() {
           </div>
         </div>
         <button type="submit" className="primary-button rise-auth-submit" disabled={loading}>
-          <span>{loading ? "Signing in…" : "Sign in & open OS"}</span>
+          <span>{loading ? "Signing in…" : "Sign in"}</span>
           <span aria-hidden>→</span>
         </button>
       </form>
 
       <div className="rise-auth-switch">
         New to RISE OS? <Link href="/signup">Create an account →</Link>
-        <br />
-        Freemium accounts start with 5 PDF extraction credits.
       </div>
     </AuthLayout>
   );

@@ -44,7 +44,8 @@ from reportlab.platypus import Image as RLImage
 from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from datetime import datetime, timedelta
 from sqlalchemy import JSON, DateTime, ForeignKey, String, func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import object_session, relationship
+import logging
 
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -212,7 +213,18 @@ DEFAULT_SPECIFICATION_COLUMNS = [
 
 
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'luminaire.db'}")
-FREEMIUM_DEFAULT_CREDITS = max(int(os.getenv("FREEMIUM_DEFAULT_CREDITS", "5")), 0)
+FREEMIUM_DEFAULT_CREDITS = max(int(os.getenv("FREEMIUM_DEFAULT_CREDITS", "20")), 0)
+# Beta allowance: credits are valid for this many days, counted from account activation.
+FREEMIUM_CREDIT_DAYS = max(int(os.getenv("FREEMIUM_CREDIT_DAYS", "15")), 1)
+PENDING_ACTIVATION_MESSAGE = "Your account is awaiting activation. We'll email you when your workspace is ready."
+APP_PUBLIC_URL = os.getenv("APP_PUBLIC_URL", "https://os.risewithai.io/lighting").rstrip("/")
+SMTP_HOST = os.getenv("SMTP_HOST", "").strip()
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587") or 587)
+SMTP_USER = os.getenv("SMTP_USER", "").strip()
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+SMTP_FROM = os.getenv("SMTP_FROM", "").strip() or SMTP_USER
+SMTP_SSL = os.getenv("SMTP_SSL", "").strip().lower() in {"1", "true", "yes"}
+rise_logger = logging.getLogger("rise.accounts")
 _is_sqlite = DATABASE_URL.startswith("sqlite")
 engine = create_engine(
     DATABASE_URL,
@@ -628,12 +640,37 @@ class GoogleAuthRequest(BaseModel):
     credential: str
 
 
+def credit_expiry_key(user_id: int) -> str:
+    return f"beta_credits_expire:{user_id}"
+
+
+def get_credit_expiry(db: Optional[Session], user_id: int) -> Optional[datetime]:
+    if db is None:
+        return None
+    raw = get_setting(db, credit_expiry_key(user_id), "")
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(raw)
+    except ValueError:
+        return None
+
+
+def credit_expiry_fields(row: User) -> dict:
+    expires = get_credit_expiry(object_session(row), row.id) if row.account_type == "freemium" else None
+    return {
+        "creditsExpireAt": expires.isoformat() + "Z" if expires else None,
+        "creditsExpired": bool(expires and expires <= datetime.utcnow()),
+    }
+
+
 def serialize_user_session(row: User) -> dict:
     return {
         "id": row.id,
         "email": row.email,
         "role": row.role,
         "tokens": row.tokens or 0,
+        **credit_expiry_fields(row),
         "accountType": row.account_type,
         "isActive": bool(row.is_active),
         "name": row.name or None,
@@ -685,7 +722,7 @@ def signup(request: SignupRequest, db: Session = Depends(get_db)):
     if not new_user.is_active:
         return {
             "requires_activation": True,
-            "message": f"Freemium account created with {FREEMIUM_DEFAULT_CREDITS} PDF credits. An administrator must activate it before you can sign in.",
+            "message": PENDING_ACTIVATION_MESSAGE, "creditAllowance": FREEMIUM_DEFAULT_CREDITS, "creditDays": FREEMIUM_CREDIT_DAYS,
             "user": serialize_user_session(new_user),
         }
     
@@ -701,7 +738,7 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     if not user or not verify_password(request.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Your freemium account is awaiting admin activation")
+        raise HTTPException(status_code=403, detail=PENDING_ACTIVATION_MESSAGE)
     
     access_token = create_access_token(
         data={"sub": str(user.id), "role": user.role},
@@ -739,7 +776,7 @@ def google_auth(request: GoogleAuthRequest, db: Session = Depends(get_db)):
         if not user.is_active:
             return {
                 "requires_activation": True,
-                "message": f"Freemium account created with {FREEMIUM_DEFAULT_CREDITS} PDF credits. An administrator must activate it before you can sign in.",
+                "message": PENDING_ACTIVATION_MESSAGE, "creditAllowance": FREEMIUM_DEFAULT_CREDITS, "creditDays": FREEMIUM_CREDIT_DAYS,
                 "user": serialize_user_session(user),
             }
             
@@ -783,6 +820,7 @@ def serialize_user_admin(row: User) -> dict:
         "createdAt": row.created_at.isoformat(),
         "name": row.name or None,
         "studioName": row.studio_name or None,
+        **credit_expiry_fields(row),
     }
 
 
@@ -798,6 +836,12 @@ def reserve_freemium_credits(db: Session, user_id: int, requested_credits: int) 
         raise HTTPException(status_code=403, detail="Your account is pending admin activation")
     if user.role == "admin" or user.account_type != "freemium":
         return None
+    expires = get_credit_expiry(db, user_id)
+    if expires and expires <= datetime.utcnow():
+        raise HTTPException(
+            status_code=402,
+            detail=f"Your beta credits expired on {expires.strftime('%d %b %Y')}. Contact RISE to continue.",
+        )
 
     updated = (
         db.query(User)
@@ -814,7 +858,7 @@ def reserve_freemium_credits(db: Session, user_id: int, requested_credits: int) 
         available = db.query(User.tokens).filter(User.id == user_id).scalar() or 0
         raise HTTPException(
             status_code=402,
-            detail=f"Not enough PDF credits. This request needs {requested_credits}, but you have {available} remaining.",
+            detail=f"Not enough product extraction credits. This request needs {requested_credits}, but you have {available} remaining.",
         )
 
     db.commit()
@@ -846,11 +890,18 @@ async def update_admin_user(
         raise HTTPException(status_code=400, detail="Administrator accounts cannot be changed here")
 
     data = await request.json()
+    newly_activated = False
 
     if "is_active" in data:
         if not isinstance(data["is_active"], bool):
             raise HTTPException(status_code=400, detail="is_active must be true or false")
+        newly_activated = data["is_active"] and not row.is_active
         row.is_active = data["is_active"]
+        if newly_activated and row.account_type == "freemium" and not get_setting(db, credit_expiry_key(row.id), ""):
+            # First activation starts the beta allowance. Re-activation never resets the clock.
+            row.tokens = max(row.tokens or 0, FREEMIUM_DEFAULT_CREDITS)
+            expires = datetime.utcnow() + timedelta(days=FREEMIUM_CREDIT_DAYS)
+            set_setting(db, credit_expiry_key(row.id), expires.isoformat(timespec="seconds"))
 
     if "set_tokens" in data:
         try:
@@ -888,7 +939,50 @@ async def update_admin_user(
 
     db.commit()
     db.refresh(row)
-    return serialize_user_admin(row)
+    result = serialize_user_admin(row)
+    if newly_activated:
+        result["activationEmail"] = send_activation_email(row)
+    return result
+
+
+def send_activation_email(user: User) -> str:
+    """Tell the user their workspace is ready. Returns sent / not_configured / failed."""
+    if not SMTP_HOST or not SMTP_FROM:
+        rise_logger.warning("Activation email not sent to %s: SMTP is not configured", user.email)
+        return "not_configured"
+    import smtplib
+    from email.message import EmailMessage
+
+    expires = get_credit_expiry(object_session(user), user.id)
+    first_name = (user.name or "").strip().split(" ")[0] or "there"
+    lines = [f"Hi {first_name},", "", "Your RISE OS workspace is ready.", ""]
+    if user.account_type == "freemium":
+        allowance = f"You have {user.tokens or 0} free product extraction credits"
+        if expires:
+            allowance += f", valid until {expires.strftime('%d %B %Y')}"
+        lines += [allowance + ".", ""]
+    lines += [f"Sign in here: {APP_PUBLIC_URL}/login", "", "RISE OS for Lighting Workflows", "RISE with AI"]
+    message = EmailMessage()
+    message["Subject"] = "Your RISE OS workspace is ready"
+    message["From"] = SMTP_FROM
+    message["To"] = user.email
+    message.set_content("\n".join(lines))
+    try:
+        if SMTP_SSL:
+            with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=20) as server:
+                if SMTP_USER:
+                    server.login(SMTP_USER, SMTP_PASSWORD)
+                server.send_message(message)
+        else:
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as server:
+                server.starttls()
+                if SMTP_USER:
+                    server.login(SMTP_USER, SMTP_PASSWORD)
+                server.send_message(message)
+        return "sent"
+    except Exception:
+        rise_logger.exception("Activation email to %s failed", user.email)
+        return "failed"
 
 
 @app.get("/api/admin/invite-codes")

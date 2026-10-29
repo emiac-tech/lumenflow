@@ -1506,3 +1506,344 @@ th,
 .crop-stage-image {
   max-height: 60vh;
 }
+
+/* ── Auth pages v2 (client layout, 28 Oct 2026) ── */
+.rise-auth2 {
+  min-height: 100vh;
+  background: var(--rise-paper);
+  overflow-x: hidden;
+}
+
+.rise-auth2-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.rise-auth2-head {
+  display: flex;
+  align-items: center;
+}
+
+.rise-flow {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.rise-flow-steps {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--rise-line);
+  border-radius: 9px;
+  background: #fffdfb;
+  overflow: hidden;
+}
+
+.rise-flow-step {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.rise-flow-step > button {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 12px 18px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 500ms ease;
+}
+
+.rise-flow-step b {
+  font: 500 19px "Manrope", Arial, sans-serif;
+  letter-spacing: -0.035em;
+  color: var(--rise-red-deep);
+}
+
+.rise-flow-step small {
+  font-size: 12px;
+  color: var(--rise-ink-soft);
+}
+
+.rise-flow-step.active > button {
+  background: var(--rise-red-soft);
+}
+
+.rise-flow-chevron {
+  position: absolute;
+  right: -7px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  color: #c9a89b;
+  font-size: 20px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.rise-flow-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--rise-red);
+  opacity: 0.75;
+  transform-origin: left center;
+  animation-name: rise-step-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.rise-flow.paused .rise-flow-progress {
+  animation-play-state: paused;
+}
+
+.rise-flow-pause {
+  flex: 0 0 auto;
+  align-self: center;
+  padding: 8px 14px;
+  border: 1px solid var(--rise-line);
+  border-radius: 999px;
+  background: #fffdfb;
+  color: var(--rise-ink-soft);
+  font: 600 12px "DM Sans", Arial, sans-serif;
+  cursor: pointer;
+}
+
+.rise-flow-pause:hover {
+  border-color: var(--rise-line-strong);
+}
+
+.rise-auth2-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 470px);
+  gap: 56px;
+  align-items: center;
+}
+
+.rise-auth2-story .rise-eyebrow {
+  margin: 0 0 18px;
+}
+
+.rise-auth2-headline,
+.rise-auth2-kicker-headline {
+  font-family: "Manrope", Arial, sans-serif;
+  font-size: clamp(38px, 4.6vw, 64px);
+  line-height: 1.02;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  color: var(--rise-ink);
+  margin: 0;
+}
+
+.rise-auth2-headline span,
+.rise-auth2-kicker-headline span {
+  display: block;
+  color: var(--rise-red);
+}
+
+.rise-auth2-kicker-headline {
+  font-size: clamp(44px, 5vw, 76px);
+}
+
+.rise-auth2-story .rise-auth-tag {
+  margin-top: 22px;
+  font-size: 21px;
+  letter-spacing: -0.03em;
+  color: var(--rise-ink);
+}
+
+.rise-auth2-priorities {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 15.5px;
+  color: #70645c;
+}
+
+.rise-auth2-priorities li + li::before {
+  content: "·";
+  margin-right: 14px;
+  color: #c9a89b;
+}
+
+.rise-auth2-panel {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.rise-auth2-foot {
+  text-align: center;
+  font-size: 11.5px;
+  color: #a18b7b;
+  padding-top: 8px;
+}
+
+.rise-auth-hint,
+.rise-auth-note {
+  font-size: 12px;
+  color: var(--rise-muted);
+}
+
+.rise-auth-note {
+  margin: -4px 0 0;
+  text-align: center;
+}
+
+.rise-auth-confirm {
+  display: grid;
+  gap: 0;
+}
+
+.rise-auth-allowance {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: var(--rise-red-soft);
+  border: 1px solid #f3d3c8;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--rise-ink-soft);
+}
+
+a.rise-auth-submit {
+  text-decoration: none;
+}
+
+@media (max-width: 960px) {
+  .rise-auth2-body {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .rise-auth2-panel {
+    justify-content: stretch;
+  }
+  .rise-auth2-panel .rise-auth-card {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .rise-auth2-wrap {
+    padding: 18px 16px 24px;
+    gap: 18px;
+  }
+  .rise-flow {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rise-flow-step > button {
+    padding: 10px 4px 12px;
+  }
+  .rise-flow-step b {
+    font-size: 14px;
+  }
+  .rise-flow-step small {
+    font-size: 10px;
+  }
+  .rise-flow-chevron {
+    display: none;
+  }
+  .rise-flow-pause {
+    align-self: flex-end;
+    padding: 5px 12px;
+  }
+  .rise-auth2-headline,
+  .rise-auth2-kicker-headline {
+    font-size: 36px;
+  }
+  .rise-auth2-story .rise-auth-tag {
+    font-size: 18px;
+    margin-top: 14px;
+  }
+  .rise-auth-card {
+    padding: 26px 20px 22px;
+  }
+}
+
+/* Brand colour field: picker + HEX + CMYK */
+.rise-colorfield {
+  display: grid;
+  gap: 8px;
+}
+
+.rise-colorfield-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rise-colorfield-row input[type="color"] {
+  flex: 0 0 auto;
+  width: 52px !important;
+  height: 42px !important;
+}
+
+.rise-colorfield-hex {
+  width: 120px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-transform: uppercase;
+}
+
+.rise-colorfield-cmyk {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.rise-colorfield-cmyk label {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--rise-muted);
+}
+
+.rise-colorfield-cmyk input {
+  width: 100%;
+  padding: 8px 8px !important;
+  font-size: 13px;
+}
+
+.rise-colorfield-note {
+  font-size: 11.5px;
+  color: var(--rise-muted);
+}
+
+.rise-colorfield-error {
+  font-size: 12px;
+  color: #b22821;
+}
+.rise-formrow { align-items: start; }
+.rise-auth2-headline { font-size: clamp(36px, 3.9vw, 56px); }
+@media (max-width: 640px) { .rise-auth2-headline { font-size: 32px; } .rise-flow-pause { padding: 4px 10px; font-size: 11px; } }
+.rise-form .field .rise-colorfield-note,
+.field .rise-colorfield-note { font-weight: 400; font-size: 11.5px; color: var(--rise-muted); line-height: 1.5; }
+.rise-form .field .rise-colorfield-error,
+.field .rise-colorfield-error { font-weight: 500; font-size: 12px; color: #b22821; }
+.rise-form .field .rise-colorfield-cmyk label { font-weight: 600; font-size: 11px; color: var(--rise-muted); }

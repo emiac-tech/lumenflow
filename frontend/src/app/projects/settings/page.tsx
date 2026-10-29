@@ -1,5 +1,6 @@
 "use client";
 
+import BrandColorField from "@/components/BrandColorField";
 import { withBase } from "@/utils/basePath";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -203,10 +204,7 @@ export default function ProjectSettingsPage() {
                   </div>
                 </div>
                 <div className="rise-formrow">
-                  <label className="field">
-                    <span>Accent</span>
-                    <input type="color" value={draft.accent} onChange={(e) => set("accent", e.target.value)} />
-                  </label>
+                  <BrandColorField label="Accent" value={draft.accent} onChange={(hex) => set("accent", hex)} />
                   <label className="field">
                     <span>Template</span>
                     <select value={draft.template} onChange={(e) => set("template", e.target.value as BrandTemplate)}>

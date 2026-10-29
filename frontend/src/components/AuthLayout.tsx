@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from "react";
 
 const STEPS = [
-  { n: "01", t: "Setup", s: "Your standards." },
-  { n: "02", t: "Extract", s: "Data, organised." },
-  { n: "03", t: "Review", s: "Your judgement." },
-  { n: "04", t: "Deliver", s: "Documents, ready." },
+  { t: "Setup", s: "Your standards." },
+  { t: "Extract", s: "Data, organised." },
+  { t: "Review", s: "Your judgement." },
+  { t: "Deliver", s: "Documents, ready." },
 ];
+
+/** Public RISE OS landing page (used by "Back to RISE OS"). */
+export const RISE_LANDING_URL = process.env.NEXT_PUBLIC_LANDING_URL || "https://risewithai.io";
 
 export function RiseLockup() {
   return (
@@ -23,8 +26,8 @@ export function RiseLockup() {
 
 const STEP_MS = 2800;
 
-/** The four workflow steps light up one after another (Setup → Extract → Review → Deliver). */
-function WorkflowSteps() {
+/** Setup → Extract → Review → Deliver, lit one after another, with a Pause control. */
+function WorkflowFlow() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -37,67 +40,55 @@ function WorkflowSteps() {
     return () => media.removeEventListener("change", onChange);
   }, []);
 
-  // The active card's progress bar drives the change: when it fills, the next step lights up.
-  // Hovering pauses the bar (CSS animation-play-state), so the timing never jumps.
   const next = () => setActive((i) => (i + 1) % STEPS.length);
+  const moving = !paused && !reduceMotion;
 
   return (
-    <div
-      className={`rise-auth-steps ${paused ? "paused" : ""}`}
-      aria-label="How RISE OS works"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {STEPS.map((st, i) => (
-        <button
-          type="button"
-          key={st.n}
-          className={`rise-auth-step ${i === active ? "active" : ""} ${i < active ? "done" : ""}`}
-          aria-current={i === active ? "step" : undefined}
-          onClick={() => setActive(i)}
-        >
-          <small>{st.n}</small>
-          <b>{st.t}</b>
-          <small>{st.s}</small>
-          {i === active && !reduceMotion && (
-            <span
-              className="rise-auth-step-progress"
-              style={{ animationDuration: `${STEP_MS}ms` }}
-              key={`p-${active}`}
-              onAnimationEnd={next}
-            />
-          )}
+    <section className={`rise-flow ${moving ? "" : "paused"}`} aria-label="How RISE OS works">
+      <ol className="rise-flow-steps">
+        {STEPS.map((st, i) => (
+          <li key={st.t} className={`rise-flow-step ${i === active ? "active" : ""}`}>
+            <button type="button" onClick={() => setActive(i)} aria-current={i === active ? "step" : undefined}>
+              <b>{st.t}</b>
+              <small>{st.s}</small>
+              {i === active && (
+                <span
+                  className="rise-flow-progress"
+                  style={{ animationDuration: `${STEP_MS}ms` }}
+                  key={`p-${active}`}
+                  onAnimationEnd={next}
+                />
+              )}
+            </button>
+            {i < STEPS.length - 1 && <span className="rise-flow-chevron" aria-hidden>›</span>}
+          </li>
+        ))}
+      </ol>
+      {!reduceMotion && (
+        <button type="button" className="rise-flow-pause" onClick={() => setPaused((p) => !p)} aria-pressed={paused}>
+          {paused ? "Play" : "Pause"}
         </button>
-      ))}
-    </div>
+      )}
+    </section>
   );
 }
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({ story, children }: { story: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="rise-auth">
-      <section className="rise-auth-story">
-        <RiseLockup />
-        <div>
-          <p className="rise-eyebrow">● For lighting design studios</p>
-          <h1>
-            <span>Design More.</span>
-            Admin Less.
-          </h1>
-          <p className="rise-auth-tag">Your expertise, augmented by AI.</p>
-          <p className="rise-auth-copy">
-            Bring manufacturer datasheets into a luminaire schedule. Review the details, then create Excel schedules and
-            branded specification sheets.
-          </p>
+    <div className="rise-auth2">
+      <div className="rise-auth2-wrap">
+        <header className="rise-auth2-head">
+          <RiseLockup />
+        </header>
+        <WorkflowFlow />
+        <div className="rise-auth2-body">
+          <section className="rise-auth2-story">{story}</section>
+          <section className="rise-auth2-panel">
+            <div className="rise-auth-card">{children}</div>
+          </section>
         </div>
-        <WorkflowSteps />
-      </section>
-      <section className="rise-auth-panel">
-        <div className="rise-auth-card">
-          {children}
-        </div>
-        <p className="rise-auth-foot" style={{ marginTop: 18 }}>RISE OS for Lighting Workflows · RISE with AI</p>
-      </section>
+        <footer className="rise-auth2-foot">RISE OS for Lighting Workflows / RISE with AI</footer>
+      </div>
     </div>
   );
 }

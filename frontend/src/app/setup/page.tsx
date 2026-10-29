@@ -1,5 +1,6 @@
 "use client";
 
+import BrandColorField from "@/components/BrandColorField";
 import { withBase } from "@/utils/basePath";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -186,10 +187,7 @@ export default function SetupPage() {
               </div>
             </div>
             <div className="rise-formrow">
-              <label className="field">
-                <span>Document accent</span>
-                <input type="color" value={draftAccent} onChange={(e) => setDraftAccent(e.target.value)} />
-              </label>
+              <BrandColorField label="Document accent" value={draftAccent} onChange={setDraftAccent} />
               <label className="field">
                 <span>Default template</span>
                 <select value={draftTemplate} onChange={(e) => setDraftTemplate(e.target.value as BrandTemplate)}>

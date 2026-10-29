@@ -92,12 +92,20 @@ export default function Sidebar() {
                 {user?.accountType === "invited" ? "Invited account" : "Beta / freemium"}
               </p>
               <strong>
-                {tokens} PDF extraction{tokens === 1 ? "" : "s"} available
+                {user?.creditsExpired
+                  ? "Beta credits expired"
+                  : `${tokens} product extraction credit${tokens === 1 ? "" : "s"} available`}
               </strong>
               <div className="rise-credits-bar">
-                <span style={{ width: `${Math.min(100, Math.max(tokens > 0 ? 6 : 0, (tokens / Math.max(tokens, 5)) * 100))}%` }} />
+                <span style={{ width: `${user?.creditsExpired ? 0 : Math.min(100, Math.max(tokens > 0 ? 6 : 0, (tokens / Math.max(tokens, 20)) * 100))}%` }} />
               </div>
-              <p>{tokens === 0 ? "No credits left. Contact RISE to continue." : "Each PDF or product link uses one credit."}</p>
+              <p>
+                {user?.creditsExpired || tokens === 0
+                  ? "Contact RISE to continue."
+                  : user?.creditsExpireAt
+                    ? `Valid until ${new Date(user.creditsExpireAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}.`
+                    : "Credits are used when products are extracted."}
+              </p>
             </>
           )}
         </div>
