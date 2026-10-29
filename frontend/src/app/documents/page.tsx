@@ -119,7 +119,7 @@ export default function DocumentsPage() {
             </p>
           </div>
         ) : (
-          <table className="rise-doc-table">
+          <table className="rise-doc-table rise-doc-table-responsive">
             <thead>
               <tr>
                 <th>Document</th>
@@ -133,16 +133,16 @@ export default function DocumentsPage() {
             <tbody>
               {visible.map((d) => (
                 <tr key={`${d.projectId}-${d.id}`}>
-                  <td><span style={{ fontWeight: 600 }}>{d.title}</span></td>
-                  <td>
+                  <td data-label="Document"><span style={{ fontWeight: 600 }}>{d.title}</span></td>
+                  <td data-label="Project">
                     <Link href="/schedule" className="rise-link" style={{ fontWeight: 500 }} onClick={() => setActiveProjectId(d.projectId)}>
                       {d.projectName}
                     </Link>
                   </td>
-                  <td>{d.type === "schedule" ? "Schedule" : "Specification sheet"}</td>
-                  <td>{d.revision || d.projectRevision || "—"}</td>
-                  <td>{parseServerDate(d.createdAt) ? parseServerDate(d.createdAt)!.toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
-                  <td style={{ textAlign: "right" }}>
+                  <td data-label="Type">{d.type === "schedule" ? "Schedule" : "Specification sheet"}</td>
+                  <td data-label="Revision">{d.revision || d.projectRevision || "—"}</td>
+                  <td data-label="Created">{parseServerDate(d.createdAt) ? parseServerDate(d.createdAt)!.toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+                  <td data-label="Action" className="rise-doc-action" style={{ textAlign: "right" }}>
                     <a className="rise-link" href={withBase(d.fileUrl)} target="_blank" rel="noopener noreferrer">
                       {d.type === "schedule" ? (d.fileUrl.endsWith(".xlsx") ? "Download Excel ↓" : "Download PDF ↓") : "Preview sheet ↗"}
                     </a>

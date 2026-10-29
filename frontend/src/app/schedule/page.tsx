@@ -312,7 +312,7 @@ export default function SchedulePage() {
               </div>
             )}
           </div>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div className="topbar-actions" style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {activeProjectId !== null && (
               <Link href="/projects/settings" className="rise-btn-outline">Project settings</Link>
             )}
