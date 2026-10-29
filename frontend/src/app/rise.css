@@ -2121,3 +2121,54 @@ a.rise-auth-submit {
 }
 .rise-colorfield-sub,
 .rise-form .field .rise-colorfield-sub { font-size: 12px; font-weight: 600; color: var(--rise-ink); margin-top: 4px; }
+
+/* ══ Mobile sign-in edits (client brief 29 Oct) + white nav icons ══ */
+.rise-mobile-only { display: none; }
+.rise-auth2-foot-sep { display: inline; }
+
+/* Sidebar / top-nav icons are white */
+.rise-side-nav a svg,
+.rise-side-nav a[aria-current="page"] svg { color: #ffffff; }
+
+@media (max-width: 767px) {
+  .rise-mobile-only { display: inline; }
+  .rise-desktop-only { display: none !important; }
+
+  .rise-auth2-wrap { padding: 16px 20px 24px; gap: 24px; min-height: 0; }
+
+  /* 1. Compact, static workflow strip: names only, no captions, no Pause */
+  .rise-flow { flex-direction: row; }
+  .rise-flow-pause, .rise-flow-chevron, .rise-flow-progress, .rise-flow-step small { display: none !important; }
+  .rise-flow-step > button { padding: 12px 2px !important; cursor: default; }
+  .rise-flow-step.active > button { background: transparent; }
+  .rise-flow-step b { font-size: 15px !important; letter-spacing: -0.02em; }
+
+  /* 2. No marketing block on mobile sign-in; form directly below the strip */
+  .rise-auth2--login .rise-auth2-story { display: none; }
+  .rise-auth2--login .rise-auth2-body { gap: 0; flex: 0 0 auto; }
+
+  /* 3 + 4. Heading, readable inputs (16px stops iOS zoom), 44-48px controls */
+  .rise-auth2 .rise-auth-card { padding: 24px 20px 22px; }
+  .rise-auth2 .rise-auth-card h2 { font-size: 27px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.04em; }
+  .rise-auth2 .rise-auth-card .rise-auth-desc { font-size: 14px; margin-bottom: 18px; }
+  .rise-auth2 .rise-auth-form { gap: 14px; }
+  .rise-auth2 .rise-auth-form .field input { font-size: 16px !important; min-height: 48px; padding: 12px 14px !important; }
+  .rise-auth2 .rise-pw button { min-height: 44px; min-width: 52px; font-size: 13px; }
+  .rise-auth2 .rise-auth-submit { min-height: 48px; padding: 12px 16px !important; font-size: 15px; }
+  .rise-auth2 .rise-auth-switch { margin-top: 16px; padding-top: 14px; font-size: 14px; }
+
+  .rise-auth2-foot { text-align: left; font-size: 12px; line-height: 1.5; padding-top: 0; }
+  .rise-auth2-foot > span { display: block; }
+  .rise-auth2-foot-sep { display: none !important; }
+  .rise-auth2-foot-by .rise-mobile-only { display: inline; }
+}
+
+/* Mobile app nav: labels must never spill out of their tab */
+@media (max-width: 900px) {
+  .rise-side-nav { display: flex !important; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .rise-side-nav::-webkit-scrollbar { display: none; }
+  .rise-side-nav a { flex: 1 1 auto; min-width: max-content; padding: 8px 8px !important; font-size: 12px !important; }
+}
+@media (max-width: 380px) {
+  .rise-side-nav a { font-size: 11px !important; padding: 8px 5px !important; letter-spacing: -0.01em; }
+}

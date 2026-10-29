@@ -24,27 +24,38 @@ function WorkflowFlow() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [compact, setCompact] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduceMotion(media.matches);
-    const onChange = () => setReduceMotion(media.matches);
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const phone = window.matchMedia("(max-width: 767px)");
+    const sync = () => {
+      setReduceMotion(motion.matches);
+      setCompact(phone.matches);
+    };
+    sync();
+    motion.addEventListener("change", sync);
+    phone.addEventListener("change", sync);
+    return () => {
+      motion.removeEventListener("change", sync);
+      phone.removeEventListener("change", sync);
+    };
   }, []);
 
   const next = () => setActive((i) => (i + 1) % STEPS.length);
-  const moving = !paused && !reduceMotion;
+  // On phones the strip is a static, compact row (no animation, no Pause).
+  const animated = !reduceMotion && !compact;
+  const moving = !paused && animated;
 
   return (
     <section className={`rise-flow ${moving ? "" : "paused"}`} aria-label="How RISE OS works">
       <ol className="rise-flow-steps">
         {STEPS.map((st, i) => (
-          <li key={st.t} className={`rise-flow-step ${i === active ? "active" : ""}`}>
+          <li key={st.t} className={`rise-flow-step ${animated && i === active ? "active" : ""}`}>
             <button type="button" onClick={() => setActive(i)} aria-current={i === active ? "step" : undefined}>
               <b>{st.t}</b>
               <small>{st.s}</small>
-              {i === active && (
+              {animated && i === active && (
                 <span
                   className="rise-flow-progress"
                   style={{ animationDuration: `${STEP_MS}ms` }}
@@ -57,7 +68,7 @@ function WorkflowFlow() {
           </li>
         ))}
       </ol>
-      {!reduceMotion && (
+      {animated && (
         <button type="button" className="rise-flow-pause" onClick={() => setPaused((p) => !p)} aria-pressed={paused}>
           {paused ? "Play" : "Pause"}
         </button>
@@ -66,9 +77,17 @@ function WorkflowFlow() {
   );
 }
 
-export default function AuthLayout({ story, children }: { story: React.ReactNode; children: React.ReactNode }) {
+export default function AuthLayout({
+  story,
+  children,
+  variant = "signup",
+}: {
+  story: React.ReactNode;
+  children: React.ReactNode;
+  variant?: "login" | "signup";
+}) {
   return (
-    <div className="rise-auth2">
+    <div className={`rise-auth2 rise-auth2--${variant}`}>
       <div className="rise-auth2-wrap">
         <header className="rise-auth2-head">
           <RiseLockup />
@@ -80,7 +99,13 @@ export default function AuthLayout({ story, children }: { story: React.ReactNode
             <div className="rise-auth-card">{children}</div>
           </section>
         </div>
-        <footer className="rise-auth2-foot">RISE OS for Lighting Workflows / RISE with AI</footer>
+        <footer className="rise-auth2-foot">
+          <span>RISE OS for Lighting Workflows</span>
+          <span className="rise-auth2-foot-sep"> / </span>
+          <span className="rise-auth2-foot-by">
+            <span className="rise-mobile-only">by </span>RISE with AI
+          </span>
+        </footer>
       </div>
     </div>
   );

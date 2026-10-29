@@ -46,6 +46,7 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
+      variant="login"
       story={
         <>
           <p className="rise-eyebrow">Design More. Admin Less.</p>
@@ -62,8 +63,11 @@ export default function LoginPage() {
         </>
       }
     >
-      <p className="rise-eyebrow">Welcome back</p>
-      <h2>Back to your design work.</h2>
+      <p className="rise-eyebrow rise-desktop-only">Welcome back</p>
+      <h2>
+        <span className="rise-desktop-only">Back to your design work.</span>
+        <span className="rise-mobile-only">Welcome back.</span>
+      </h2>
       <p className="rise-auth-desc">Sign in to your RISE OS workspace.</p>
 
       <form onSubmit={handleEmailLogin} className="rise-auth-form">
