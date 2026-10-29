@@ -70,7 +70,12 @@ export default function DocumentsPage() {
     <div className="shell">
       <Sidebar />
       <main className="main">
-        <section className="rise-page-head">
+        <section className="rise-m-head rise-mobile-block">
+          <h1>Documents</h1>
+          <p>Schedules and spec sheets, by project.</p>
+        </section>
+
+        <section className="rise-page-head rise-desktop-only">
           <div>
             <p className="rise-eyebrow">Documentation / Project deliverables</p>
             <h1>Every deliverable. Easy to find.</h1>
@@ -82,8 +87,8 @@ export default function DocumentsPage() {
           <Link href="/projects" className="rise-btn-outline">Go to projects →</Link>
         </section>
 
-        <div className="rise-note">Browse your project deliverables by project and document type. Each document links back to its project.</div>
-        <div className="rise-filters">
+        <div className="rise-note rise-desktop-only">Browse your project deliverables by project and document type. Each document links back to its project.</div>
+        <div className="rise-filters rise-doc-filters">
           <label>
             Project
             <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}>
@@ -96,28 +101,42 @@ export default function DocumentsPage() {
           <label>
             Document type
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-              <option value="all">All document types</option>
+              <option value="all">All types</option>
               <option value="schedule">Schedules</option>
               <option value="spec">Specification sheets</option>
             </select>
           </label>
           <label style={{ flex: 1 }}>
             Search
-            <input placeholder="Search project or document" value={query} onChange={(e) => setQuery(e.target.value)} style={{ width: "100%" }} />
+            <input placeholder="Search documents" aria-label="Search documents" value={query} onChange={(e) => setQuery(e.target.value)} style={{ width: "100%" }} />
           </label>
         </div>
 
         {docs === null ? (
           <p className="muted">Loading documents…</p>
         ) : visible.length === 0 ? (
-          <div className="rise-empty">
-            <h3>{docs.length === 0 ? "No documents yet." : "Nothing matches these filters."}</h3>
-            <p>
-              {docs.length === 0
-                ? "Specification sheets you download from a project schedule will be listed here."
-                : "Try another project or search term."}
-            </p>
-          </div>
+          docs.length === 0 ? (
+            <div className="rise-empty rise-empty-compact">
+              <h3>No documents yet.</h3>
+              <p>Create schedules and spec sheets from a project.</p>
+              <Link href="/projects" className="rise-link">Go to projects →</Link>
+            </div>
+          ) : (
+            <div className="rise-empty rise-empty-compact">
+              <h3>No matching documents.</h3>
+              <button
+                type="button"
+                className="rise-btn-outline"
+                onClick={() => {
+                  setProjectFilter("all");
+                  setTypeFilter("all");
+                  setQuery("");
+                }}
+              >
+                Clear filters
+              </button>
+            </div>
+          )
         ) : (
           <table className="rise-doc-table rise-doc-table-responsive">
             <thead>

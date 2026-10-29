@@ -63,7 +63,15 @@ export default function HomePage() {
     <div className="shell">
       <Sidebar />
       <main className="main">
-        <section className="rise-page-head">
+        <section className="rise-m-head rise-mobile-block">
+          <h1>Your studio</h1>
+          <p>Projects, documents and studio settings.</p>
+          <button type="button" className="primary-button" onClick={() => router.push("/projects/new")}>
+            + New project
+          </button>
+        </section>
+
+        <section className="rise-page-head rise-desktop-only">
           <div>
             <p className="rise-eyebrow">Home / Your studio</p>
             <h1>Admin less. Design more.</h1>
@@ -74,7 +82,7 @@ export default function HomePage() {
           </button>
         </section>
 
-        <section className="rise-card rise-studio">
+        <section className="rise-card rise-studio rise-desktop-only">
           <div className="rise-studio-mark" aria-hidden>
             {studio?.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -93,7 +101,7 @@ export default function HomePage() {
           </Link>
         </section>
 
-        <section className={`rise-stats ${user?.role === "admin" ? "three" : ""}`} aria-label="Workspace summary">
+        <section className={`rise-stats rise-desktop-only ${user?.role === "admin" ? "three" : ""}`} aria-label="Workspace summary">
           <div>
             <span>Projects</span>
             <strong>{isLoading ? "–" : projects.length}</strong>
@@ -116,13 +124,21 @@ export default function HomePage() {
 
         <section>
           <div className="rise-section-head">
-            <h2>Your projects</h2>
+            <h2>
+              <span className="rise-desktop-only">Your projects</span>
+              <span className="rise-mobile-only">Recent projects</span>
+            </h2>
             <Link href="/projects" className="rise-link">View all projects →</Link>
           </div>
           {isLoading ? (
             <p className="muted">Loading projects…</p>
           ) : recent.length === 0 ? (
-            <div className="rise-empty">
+            <>
+            <div className="rise-m-empty rise-mobile-block">
+              <strong>No projects yet.</strong>
+              <span>Create your first project above.</span>
+            </div>
+            <div className="rise-empty rise-desktop-only">
               <span style={{ fontSize: 26, color: "var(--rise-red)" }}>+</span>
               <h3>Your next project starts here.</h3>
               <p>Give it a name. Your studio defaults will come with it.</p>
@@ -130,6 +146,7 @@ export default function HomePage() {
                 Create your first project →
               </button>
             </div>
+            </>
           ) : (
             <div className="rise-project-grid">
               {recent.map((p) => (
@@ -138,6 +155,34 @@ export default function HomePage() {
             </div>
           )}
         </section>
+
+        <section className="rise-m-studio rise-mobile-block" aria-label="Your studio">
+          <div className="rise-m-studio-row">
+            <div className="rise-studio-mark" aria-hidden>
+              {studio?.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={withBase(studio.logoUrl)} alt="" />
+              ) : (
+                studioName.charAt(0).toUpperCase()
+              )}
+            </div>
+            <div className="rise-m-studio-text">
+              <strong>{studioName}</strong>
+              <span>Studio logo &amp; template settings</span>
+            </div>
+          </div>
+          <Link href="/setup" className="rise-link">{studio?.saved ? "Edit studio →" : "Set up studio →"}</Link>
+        </section>
+
+        <p className="rise-m-status rise-mobile-block">
+          {isLoading ? "–" : projects.length} project{projects.length === 1 ? "" : "s"} · {documentCount ?? "–"} document{documentCount === 1 ? "" : "s"}
+          <br />
+          {user?.role === "admin"
+            ? "Unlimited extractions"
+            : user?.creditsExpired
+              ? "Beta credits expired"
+              : `${user?.tokens ?? 0} extraction credit${(user?.tokens ?? 0) === 1 ? "" : "s"}${user?.creditsExpireAt ? ` · valid until ${new Date(user.creditsExpireAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}` : ""}`}
+        </p>
       </main>
 
     </div>

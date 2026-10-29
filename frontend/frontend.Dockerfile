@@ -8,6 +8,9 @@ ENV API_URL=${API_URL}
 # Optional sub-folder, e.g. /lighting (baked into the build)
 ARG NEXT_PUBLIC_BASE_PATH=
 ENV NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
+# Admin MCP panel (local/test builds only). Leave empty for live.
+ARG NEXT_PUBLIC_ENABLE_MCP_ADMIN=
+ENV NEXT_PUBLIC_ENABLE_MCP_ADMIN=${NEXT_PUBLIC_ENABLE_MCP_ADMIN}
 
 # Copy package dependencies
 COPY package*.json ./

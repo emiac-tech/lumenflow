@@ -47,6 +47,7 @@ export default function BrandColorField({
   const [hexText, setHexText] = useState(value.replace(/^#/, "").toUpperCase());
   const [cmyk, setCmyk] = useState<Cmyk>(hexToCmyk(value));
   const [hexError, setHexError] = useState(false);
+  const [printOpen, setPrintOpen] = useState(false);
 
   useEffect(() => {
     setHexText(value.replace(/^#/, "").toUpperCase());
@@ -97,6 +98,15 @@ export default function BrandColorField({
           />
         </div>
       </div>
+      <button
+        type="button"
+        className="rise-colorfield-print-toggle"
+        aria-expanded={printOpen}
+        onClick={() => setPrintOpen((v) => !v)}
+      >
+        Print colour settings <span aria-hidden>{printOpen ? "▾" : "›"}</span>
+      </button>
+      <div className={`rise-colorfield-print ${printOpen ? "open" : ""}`}>
       <span className="rise-colorfield-sub">CMYK</span>
       <div className="rise-colorfield-cmyk" aria-label={`${label} CMYK`}>
         {(["C", "M", "Y", "K"] as const).map((part, index) => (
@@ -105,6 +115,7 @@ export default function BrandColorField({
             <input type="number" min={0} max={100} step={1} value={cmyk[index]} onChange={(e) => setCmykPart(index, e.target.value)} />
           </label>
         ))}
+      </div>
       </div>
       {hexError ? (
         <span className="rise-colorfield-error">Enter a 6-character hex code, for example F20707.</span>

@@ -44,7 +44,17 @@ export default function ProjectsPage() {
     <div className="shell">
       <Sidebar />
       <main className="main">
-        <section className="rise-page-head">
+        <section className="rise-m-head rise-mobile-block">
+          <h1>Projects</h1>
+          <p>Your project schedules and documents.</p>
+          {!isLoading && projects.length > 0 && (
+            <button type="button" className="primary-button" onClick={() => router.push("/projects/new")}>
+              + New project
+            </button>
+          )}
+        </section>
+
+        <section className="rise-page-head rise-desktop-only">
           <div>
             <p className="rise-eyebrow">Your workspace / Projects</p>
             <h1>A home for every project.</h1>
@@ -65,11 +75,18 @@ export default function ProjectsPage() {
         {isLoading ? (
           <p className="muted">Loading projects…</p>
         ) : projects.length === 0 ? (
-          <div className="rise-empty">
-            <h3>Ready for your first project?</h3>
-            <p>Create a project to begin.</p>
-            <button type="button" className="primary-button" onClick={() => router.push("/projects/new")}>Create a project →</button>
-          </div>
+          <>
+            <div className="rise-m-empty rise-mobile-block">
+              <strong>No projects yet.</strong>
+              <span>Create your first project to add products and prepare documents.</span>
+              <button type="button" className="primary-button" onClick={() => router.push("/projects/new")}>+ New project</button>
+            </div>
+            <div className="rise-empty rise-desktop-only">
+              <h3>Ready for your first project?</h3>
+              <p>Create a project to begin.</p>
+              <button type="button" className="primary-button" onClick={() => router.push("/projects/new")}>Create a project →</button>
+            </div>
+          </>
         ) : filtered.length === 0 ? (
           <div className="rise-empty"><p>No projects match “{query}”.</p></div>
         ) : (
@@ -109,7 +126,7 @@ export default function ProjectsPage() {
             ))}
           </div>
         )}
-        <p className="rise-fine">Open a project to continue in its luminaire schedule.</p>
+        <p className={`rise-fine ${projects.length === 0 ? "rise-desktop-only" : ""}`}>Open a project to continue in its luminaire schedule.</p>
       </main>
 
 

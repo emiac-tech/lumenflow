@@ -139,7 +139,12 @@ export default function SetupPage() {
     <div className="shell">
       <Sidebar />
       <main className="main">
-        <section className="rise-page-head">
+        <section className="rise-m-head rise-mobile-block">
+          <h1>Studio setup</h1>
+          <p>Set defaults for new projects.</p>
+        </section>
+
+        <section className="rise-page-head rise-desktop-only">
           <div>
             <p className="rise-eyebrow">Setup / Studio framework</p>
             <h1>Set the standard once.</h1>
@@ -150,28 +155,35 @@ export default function SetupPage() {
           <Link href="/projects" className="rise-btn-outline">Go to projects →</Link>
         </section>
 
-        <div className="rise-note">
+        <div className="rise-note rise-desktop-only">
           <b>Studio defaults → new projects → document snapshots.</b> Saving defaults does not silently change existing
           projects or previously generated documents.
         </div>
 
         <div className="rise-pane">
           <form className="rise-card rise-form" onSubmit={saveDefaults}>
-            <span className="rise-panel-label" style={{ marginBottom: 0 }}>Studio identity &amp; default template</span>
+            <span className="rise-panel-label" style={{ marginBottom: 0 }}>
+              <span className="rise-desktop-only">Studio identity &amp; default template</span>
+              <span className="rise-mobile-only">Studio defaults</span>
+            </span>
             <label className="field">
               <span>Studio name</span>
               <input required maxLength={100} value={draftName} onChange={(e) => setDraftName(e.target.value)} />
             </label>
             <div className="field">
               <span>
-                Studio logo <span className="rise-fine">Optional · PNG / JPEG · max 2 MB</span>
+                Studio logo <span className="rise-fine rise-desktop-only">Optional · PNG / JPEG · max 2 MB</span>
+                <span className="rise-fine rise-mobile-only">(optional)</span>
               </span>
               <div className="rise-logo-row">
                 {previewLogo && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={withBase(previewLogo)} alt="Studio logo" />
                 )}
-                <input type="file" accept="image/png,image/jpeg" onChange={onLogoChange} aria-label="Studio logo" />
+                <input id="studio-logo-input" className="rise-file-input" type="file" accept="image/png,image/jpeg" onChange={onLogoChange} aria-label="Studio logo" />
+                <label htmlFor="studio-logo-input" className="rise-btn-outline rise-upload-btn">
+                  {draftLogoFile ? "Change logo" : "Upload logo"}
+                </label>
                 {(studio?.logoUrl || draftLogoFile) && !removeLogo && (
                   <button
                     type="button"
@@ -186,6 +198,7 @@ export default function SetupPage() {
                 )}
               </div>
             </div>
+            <span className="rise-fine rise-mobile-block rise-m-filehelp">PNG / JPG · up to 2 MB</span>
             <div className="rise-formrow">
               <BrandColorField label="Hex code" value={draftAccent} onChange={setDraftAccent} />
               <label className="field">
@@ -196,14 +209,17 @@ export default function SetupPage() {
                 </select>
               </label>
             </div>
+            <p className="rise-m-helper rise-mobile-block">
+              Applies to new projects only. Existing projects and generated documents stay unchanged.
+            </p>
             <div className="rise-save-row">
               <button type="submit" className="primary-button" disabled={saving || !studio}>
                 {saving ? "Saving…" : "Save studio defaults"}
               </button>
-              <span className={`rise-save-msg ${saveError ? "error" : ""}`} role="status">{saveMsg}</span>
+              <span className={`rise-save-msg ${saveError ? "error" : ""} ${saveMsg === "Applies to new projects only." ? "rise-desktop-only" : ""}`} role="status">{saveMsg}</span>
             </div>
             <p className="rise-fine" style={{ fontSize: 13 }}>
-              New projects inherit this studio name, logo, accent and template on their specification sheets.
+              <span className="rise-desktop-only">New projects inherit this studio name, logo, accent and template on their specification sheets.</span>
               {isAdmin && (
                 <>
                   {" "}
@@ -213,6 +229,7 @@ export default function SetupPage() {
               )}
             </p>
           </form>
+          <Link href="/projects" className="rise-link rise-mobile-block rise-m-secondary">Go to projects →</Link>
           <aside>
             <span className="rise-panel-label">Live default-template preview</span>
             <SheetPreview

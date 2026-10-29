@@ -13,7 +13,7 @@ const WORKSPACE_NAV: NavItem[] = [
   { href: "/", label: "Home", icon: <House size={17} />, match: ["/"] },
   { href: "/setup", label: "Setup", icon: <Diamond size={16} />, match: ["/setup", "/settings", "/templates"] },
   { href: "/projects", label: "Projects", icon: <LayoutGrid size={16} />, match: ["/projects", "/schedule", "/print"] },
-  { href: "/documents", label: "Documentation", icon: <FileText size={16} />, match: ["/documents"] },
+  { href: "/documents", label: "Documents", icon: <FileText size={16} />, match: ["/documents"] },
 ];
 
 const ADMIN_NAV: NavItem[] = [
@@ -56,8 +56,8 @@ export default function Sidebar() {
         </Link>
         <div className="rise-top-account">
           <span className="rise-top-user" title={user?.email}>{displayName}</span>
-          <button type="button" className="rise-btn-outline" onClick={logout}>
-            Sign out →
+          <button type="button" className="rise-btn-outline rise-signout" onClick={logout}>
+            Sign out<span className="rise-desktop-only"> →</span>
           </button>
         </div>
       </header>
