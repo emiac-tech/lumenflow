@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import RiseOsLogo from "@/components/RiseOsLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { House, Diamond, LayoutGrid, FileText, Users, Ticket } from "lucide-react";
@@ -50,14 +51,8 @@ export default function Sidebar() {
   return (
     <>
       <header className="rise-top">
-        <Link href="/" className="rise-lockup" aria-label="RISE OS for Lighting Workflows, by RISE with AI">
-          <span className="rise-word">
-            RISE<b>OS</b>
-          </span>
-          <span className="rise-lockup-sub">
-            for Lighting Workflows
-            <small>by RISE with AI</small>
-          </span>
+        <Link href="/" className="rise-lockup" aria-label="RISE OS by RISE with AI">
+          <RiseOsLogo size="md" />
         </Link>
         <div className="rise-top-account">
           <span className="rise-top-user" title={user?.email}>{displayName}</span>

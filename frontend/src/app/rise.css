@@ -1847,3 +1847,103 @@ a.rise-auth-submit {
 .rise-form .field .rise-colorfield-error,
 .field .rise-colorfield-error { font-weight: 500; font-size: 12px; color: #b22821; }
 .rise-form .field .rise-colorfield-cmyk label { font-weight: 600; font-size: 11px; color: var(--rise-muted); }
+
+/* ── Official RISE OS logo (29 Oct 2026) ── */
+.rise-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  font-size: 15px;
+  line-height: 1;
+  color: #111;
+  text-decoration: none;
+}
+.rise-logo-sm { font-size: 12px; }
+.rise-logo-lg { font-size: 17px; }
+.rise-logo-mark {
+  width: 2.9em;
+  height: 2.9em;
+  border-radius: 22%;
+  display: block;
+  flex: 0 0 auto;
+}
+.rise-logo-text {
+  display: grid;
+  gap: 0.22em;
+}
+.rise-logo-word {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  font-size: 1.9em;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+.rise-logo-word b {
+  font-weight: 800;
+  color: #e0332a;
+}
+.rise-logo-by {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 0.82em;
+  color: #333;
+  padding-left: 0.05em;
+}
+.rise-logo-by b {
+  font-weight: 700;
+  color: #111;
+}
+.rise-top .rise-lockup { gap: 0; }
+
+/* ── Auth v2: wider layout (client feedback 29 Oct) ── */
+.rise-auth2-wrap {
+  max-width: 1560px;
+  padding: 28px clamp(20px, 4vw, 64px) 32px;
+}
+.rise-auth2-body {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  gap: clamp(40px, 6vw, 120px);
+}
+.rise-auth2-headline { font-size: clamp(38px, 4.4vw, 76px); }
+.rise-auth2-kicker-headline { font-size: clamp(44px, 5.4vw, 92px); }
+.rise-auth2-story .rise-auth-tag { font-size: clamp(19px, 1.6vw, 26px); }
+.rise-auth2-panel .rise-auth-card { max-width: 520px; }
+.rise-flow-step > button { padding: 18px 12px 20px; }
+.rise-flow-step b { font-size: clamp(18px, 1.5vw, 23px); }
+.rise-flow-step small { font-size: clamp(12px, 0.9vw, 14px); }
+.rise-auth2-priorities {
+  font-size: clamp(15.5px, 1.25vw, 19px);
+  font-weight: 700;
+  color: var(--rise-red);
+  margin-top: 16px;
+}
+.rise-auth2-priorities li + li::before { color: #e7a99f; }
+@media (max-width: 960px) {
+  .rise-auth2-body { grid-template-columns: 1fr; }
+  .rise-auth2-panel .rise-auth-card { max-width: none; }
+}
+@media (max-width: 640px) {
+  .rise-auth2-wrap { padding: 18px 16px 24px; }
+  .rise-auth2-headline { font-size: 32px; }
+  .rise-auth2-kicker-headline { font-size: 38px; }
+  .rise-logo-lg { font-size: 13px; }
+  .rise-flow-step b { font-size: 14px; }
+  .rise-flow-step small { font-size: 10px; }
+  .rise-flow-step > button { padding: 10px 4px 12px; }
+}
+@media (max-width: 900px) {
+  .rise-top .rise-logo { font-size: 11px; }
+}
+.rise-auth2-wrap { max-width: 1760px; min-height: 100vh; padding-left: clamp(20px, 3.5vw, 56px); padding-right: clamp(20px, 3.5vw, 56px); }
+.rise-auth2-body { flex: 1; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); }
+.rise-auth2-panel .rise-auth-card { max-width: 560px; }
+@media (min-width: 1600px) {
+  .rise-auth-card { padding: 42px 44px 36px; }
+  .rise-auth-card h2 { font-size: 42px; }
+  .rise-auth-form .field input { padding: 15px 16px; font-size: 15.5px; }
+}
+@media (max-width: 960px) { .rise-auth2-body { grid-template-columns: 1fr; flex: 0 0 auto; } .rise-auth2-wrap { min-height: 0; } }
+@media (max-width: 640px) {
+  .rise-auth2-priorities { flex-direction: column; gap: 4px; }
+  .rise-auth2-priorities li + li::before { content: none; }
+}

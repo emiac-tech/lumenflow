@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import RiseOsLogo from "@/components/RiseOsLogo";
 
 const STEPS = [
   { t: "Setup", s: "Your standards." },
@@ -13,15 +14,7 @@ const STEPS = [
 export const RISE_LANDING_URL = process.env.NEXT_PUBLIC_LANDING_URL || "https://risewithai.io";
 
 export function RiseLockup() {
-  return (
-    <span className="rise-lockup">
-      <span className="rise-word">RISE<b>OS</b></span>
-      <span className="rise-lockup-sub">
-        for Lighting Workflows
-        <small>by RISE with AI</small>
-      </span>
-    </span>
-  );
+  return <RiseOsLogo size="lg" />;
 }
 
 const STEP_MS = 2800;
