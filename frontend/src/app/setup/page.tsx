@@ -187,7 +187,7 @@ export default function SetupPage() {
               </div>
             </div>
             <div className="rise-formrow">
-              <BrandColorField label="Document accent" value={draftAccent} onChange={setDraftAccent} />
+              <BrandColorField label="Hex code" value={draftAccent} onChange={setDraftAccent} />
               <label className="field">
                 <span>Default template</span>
                 <select value={draftTemplate} onChange={(e) => setDraftTemplate(e.target.value as BrandTemplate)}>

@@ -8,14 +8,14 @@
   --line: rgba(255, 118, 108, 0.16);
   --text: #fff4f1;
   --muted: #d1b0ab;
-  --accent: #e53a31;
-  --accent-soft: rgba(229, 58, 49, 0.18);
+  --accent: #f20707;
+  --accent-soft: rgba(242, 7, 7, 0.18);
   --success: #ff9f83;
   --danger: #ff7268;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
   --radius: 14px;
   
-  --body-bg-gradient: radial-gradient(circle at 14% 18%, rgba(255, 69, 58, 0.14), transparent 28%),
+  --body-bg-gradient: radial-gradient(circle at 14% 18%, rgba(242, 7, 7, 0.14), transparent 28%),
                       radial-gradient(circle at 78% 72%, rgba(138, 8, 12, 0.22), transparent 30%),
                       linear-gradient(135deg, #030001 0%, #120305 44%, #050102 100%);
   --sidebar-gradient: linear-gradient(180deg, rgba(7, 1, 2, 0.98), rgba(22, 4, 6, 0.94) 55%, rgba(11, 2, 3, 0.98));
@@ -33,13 +33,13 @@
   --bg: #f4f5f7;
   --panel: #ffffff;
   --panel-soft: #fbfbfc;
-  --line: rgba(229, 58, 49, 0.12);
+  --line: rgba(242, 7, 7, 0.12);
   --text: #0f172a;
   --muted: #64748b;
-  --accent: #d92f28;
-  --accent-soft: rgba(217, 47, 40, 0.08);
+  --accent: #f20707;
+  --accent-soft: rgba(242, 7, 7, 0.08);
   --success: #ff9f83;
-  --danger: #d92f28;
+  --danger: #f20707;
   --shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
   
   --body-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -51,7 +51,7 @@
   --surface-low: #f8fafc;
   --button-hover: #f1f5f9;
   --button-bg: #ffffff;
-  --brand-text: linear-gradient(135deg, #0f172a 30%, #d92f28);
+  --brand-text: linear-gradient(135deg, #0f172a 30%, #f20707);
 }
 
 /* ─── Reset ─── */
@@ -118,7 +118,7 @@ h2 {
 }
 
 .brand-preamble span {
-  color: #ff2f28;
+  color: #f20707;
   margin-left: 7px;
 }
 
@@ -138,7 +138,7 @@ h2 {
 }
 
 .brand-word .accent {
-  color: #ff1717;
+  color: #f20707;
 }
 
 
@@ -148,7 +148,7 @@ h2 {
   border-radius: 20px;
   background: transparent;
   padding: 0;
-  box-shadow: 0 0 32px rgba(231, 36, 28, 0.16), 0 18px 44px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 32px rgba(242, 7, 7, 0.16), 0 18px 44px rgba(0, 0, 0, 0.3);
 }
 
 h1 {
@@ -190,8 +190,8 @@ h2 {
 .sidebar {
   --text: #fff4f1;
   --muted: #d1b0ab;
-  --accent: #e53a31;
-  --accent-soft: rgba(229, 58, 49, 0.18);
+  --accent: #f20707;
+  --accent-soft: rgba(242, 7, 7, 0.18);
   --surface-low: rgba(255, 255, 255, 0.05);
   position: relative;
   border-right: 1px solid var(--line);
@@ -206,7 +206,7 @@ h2 {
   position: absolute;
   inset: auto -14% 7% 24%;
   height: 24%;
-  background: linear-gradient(135deg, transparent 4%, rgba(255, 95, 72, 0.56) 36%, rgba(255, 219, 202, 0.84) 50%, rgba(255, 70, 56, 0.46) 62%, transparent 86%);
+  background: linear-gradient(135deg, transparent 4%, rgba(242, 7, 7, 0.56) 36%, rgba(255, 219, 202, 0.84) 50%, rgba(242, 7, 7, 0.46) 62%, transparent 86%);
   transform: rotate(-11deg);
   filter: blur(1px);
   opacity: 0.68;
@@ -244,7 +244,7 @@ h2 {
 .sidebar-section-header:hover { color: var(--text); }
 
 .sidebar-pill-btn {
-  background: rgba(229, 58, 49, 0.18);
+  background: rgba(242, 7, 7, 0.18);
   color: #fff4f1;
   border: none;
   border-radius: 5px;
@@ -441,7 +441,7 @@ h2 {
 .summary-pill {
   padding: 10px 18px;
   border-radius: 999px;
-  background: rgba(229, 58, 49, 0.18);
+  background: rgba(242, 7, 7, 0.18);
   border: 1px solid rgba(255, 118, 108, 0.22);
   color: #fff3ef;
   font-weight: 700;
@@ -587,16 +587,16 @@ td {
 .primary-button {
   padding: 13px 20px;
   border-radius: var(--radius);
-  background: linear-gradient(135deg, #f04437, #b51212);
+  background: linear-gradient(135deg, #f20707, #f20707);
   color: white;
   font-weight: 700;
   font-size: 14px;
-  box-shadow: 0 16px 30px rgba(181, 18, 18, 0.22);
+  box-shadow: 0 16px 30px rgba(242, 7, 7, 0.22);
 }
 
 .primary-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 34px rgba(181, 18, 18, 0.28);
+  box-shadow: 0 18px 34px rgba(242, 7, 7, 0.28);
 }
 
 .primary-button:disabled {
@@ -653,7 +653,7 @@ td {
   padding: 32px;
   border: 1px solid rgba(255, 118, 108, 0.22);
   background:
-    radial-gradient(circle at 82% 88%, rgba(229, 58, 49, 0.14), transparent 34%),
+    radial-gradient(circle at 82% 88%, rgba(242, 7, 7, 0.14), transparent 34%),
     linear-gradient(180deg, rgba(28, 7, 9, 0.98), rgba(10, 2, 3, 0.98));
   color: #fff4f1;
   backdrop-filter: blur(24px);
@@ -746,7 +746,7 @@ td {
 
 .ai-column-modal {
   background:
-    radial-gradient(circle at top right, rgba(229, 58, 49, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(242, 7, 7, 0.18), transparent 28%),
     radial-gradient(circle at bottom left, rgba(130, 14, 18, 0.14), transparent 32%),
     linear-gradient(180deg, rgba(15, 7, 9, 0.97), rgba(8, 3, 4, 0.98));
   border-color: rgba(255, 118, 108, 0.22);
@@ -790,7 +790,7 @@ td {
 .field input:focus,
 .field textarea:focus {
   outline: none;
-  border-color: rgba(229, 58, 49, 0.55);
+  border-color: rgba(242, 7, 7, 0.55);
   background: var(--input-focus);
 }
 
@@ -1572,7 +1572,7 @@ input[type="color"]::-moz-color-swatch {
 .toolbar-btn.active {
   background: var(--accent-soft);
   color: var(--accent);
-  border-color: rgba(229, 58, 49, 0.3);
+  border-color: rgba(242, 7, 7, 0.3);
 }
 
 .badge {
@@ -1669,7 +1669,7 @@ input[type="color"]::-moz-color-swatch {
 
 .export-option-btn:hover:not(:disabled) {
   background: var(--button-bg);
-  border-color: rgba(229, 58, 49, 0.32);
+  border-color: rgba(242, 7, 7, 0.32);
   transform: translateY(-1px);
 }
 
@@ -2064,16 +2064,16 @@ input[type="color"]::-moz-color-swatch {
 
 /* Values that list several options (e.g. "2200K / 2700K / 3000K") */
 .editable-text.multi-option-value {
-  color: #dc2626;
+  color: #f20707;
   font-weight: 600;
 }
 
 .field input.multi-option-input,
 .modal .field input.multi-option-input {
-  color: #dc2626;
+  color: #f20707;
   font-weight: 600;
-  border-color: rgba(220, 38, 38, 0.75);
-  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.35);
+  border-color: rgba(242, 7, 7, 0.75);
+  box-shadow: 0 0 0 1px rgba(242, 7, 7, 0.35);
 }
 
 .multi-option-hint,

@@ -44,12 +44,12 @@ export default function BrandColorField({
   value: string;
   onChange: (hex: string) => void;
 }) {
-  const [hexText, setHexText] = useState(value.toUpperCase());
+  const [hexText, setHexText] = useState(value.replace(/^#/, "").toUpperCase());
   const [cmyk, setCmyk] = useState<Cmyk>(hexToCmyk(value));
   const [hexError, setHexError] = useState(false);
 
   useEffect(() => {
-    setHexText(value.toUpperCase());
+    setHexText(value.replace(/^#/, "").toUpperCase());
     setCmyk(hexToCmyk(value));
     setHexError(false);
   }, [value]);
@@ -77,20 +77,27 @@ export default function BrandColorField({
     <div className="field rise-colorfield">
       <span id={`${id}-label`}>{label}</span>
       <div className="rise-colorfield-row">
-        <input type="color" aria-labelledby={`${id}-label`} value={normalizeHex(value) || "#0c5871"} onChange={(e) => onChange(e.target.value)} />
-        <input
-          className="rise-colorfield-hex"
-          aria-label={`${label} HEX code`}
-          value={hexText}
-          maxLength={7}
-          onChange={(e) => {
-            setHexText(e.target.value);
-            if (normalizeHex(e.target.value) && e.target.value.replace("#", "").length === 6) commitHex(e.target.value);
-          }}
-          onBlur={(e) => commitHex(e.target.value)}
-          placeholder="#0C5871"
-        />
+        <input type="color" aria-label={`${label} colour picker`} value={normalizeHex(value) || "#0c5871"} onChange={(e) => onChange(e.target.value)} />
+        <div className={`rise-colorfield-hexbox ${hexError ? "invalid" : ""}`}>
+          <span aria-hidden>#</span>
+          <input
+            className="rise-colorfield-hex"
+            aria-labelledby={`${id}-label`}
+            value={hexText.replace(/^#/, "")}
+            maxLength={6}
+            spellCheck={false}
+            autoCapitalize="characters"
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9a-f]/gi, "").toUpperCase();
+              setHexText(raw);
+              if (raw.length === 6) commitHex(raw);
+            }}
+            onBlur={(e) => commitHex(e.target.value)}
+            placeholder="F20707"
+          />
+        </div>
       </div>
+      <span className="rise-colorfield-sub">CMYK</span>
       <div className="rise-colorfield-cmyk" aria-label={`${label} CMYK`}>
         {(["C", "M", "Y", "K"] as const).map((part, index) => (
           <label key={part}>
@@ -100,9 +107,9 @@ export default function BrandColorField({
         ))}
       </div>
       {hexError ? (
-        <span className="rise-colorfield-error">Enter a HEX code like #0C5871.</span>
+        <span className="rise-colorfield-error">Enter a 6-character hex code, for example F20707.</span>
       ) : (
-        <span className="rise-colorfield-note">Pick a colour, type a HEX code, or enter CMYK. CMYK is converted to the nearest screen colour.</span>
+        <span className="rise-colorfield-note">Type the hex code, pick a colour, or enter CMYK. CMYK is converted to the nearest screen colour.</span>
       )}
     </div>
   );

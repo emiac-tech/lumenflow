@@ -684,8 +684,8 @@ export default function PageDesigner() {
         .prop-row label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
         .prop-row input:not([type="color"]) { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; color: var(--text); padding: 8px; font-size: 13px; }
         .prop-row input[type="color"] { width: 100%; height: 44px; padding: 3px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; background: none; }
-        .del-btn { margin-top: 10px; background: rgba(218, 54, 51, 0.1); color: #f85149; border: 1px solid rgba(218, 54, 51, 0.4); padding: 10px; border-radius: 4px; font-size: 13px; cursor: pointer; transition: 0.2s; }
-        .del-btn:hover { background: #da3633; color: #fff; }
+        .del-btn { margin-top: 10px; background: rgba(242, 7, 7, 0.1); color: #f20707; border: 1px solid rgba(242, 7, 7, 0.4); padding: 10px; border-radius: 4px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .del-btn:hover { background: #f20707; color: #fff; }
       `}</style>
     </div>
   );

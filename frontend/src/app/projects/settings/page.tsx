@@ -204,7 +204,7 @@ export default function ProjectSettingsPage() {
                   </div>
                 </div>
                 <div className="rise-formrow">
-                  <BrandColorField label="Accent" value={draft.accent} onChange={(hex) => set("accent", hex)} />
+                  <BrandColorField label="Hex code" value={draft.accent} onChange={(hex) => set("accent", hex)} />
                   <label className="field">
                     <span>Template</span>
                     <select value={draft.template} onChange={(e) => set("template", e.target.value as BrandTemplate)}>

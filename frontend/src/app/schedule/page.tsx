@@ -348,9 +348,9 @@ export default function SchedulePage() {
               <div
                 style={{
                   marginBottom: "16px",
-                  border: "1px solid rgba(239, 68, 68, 0.2)",
-                  background: "rgba(239, 68, 68, 0.08)",
-                  color: "#b91c1c",
+                  border: "1px solid rgba(242, 7, 7, 0.2)",
+                  background: "rgba(242, 7, 7, 0.08)",
+                  color: "#f20707",
                   padding: "12px 14px",
                   borderRadius: "12px",
                   fontSize: 14,

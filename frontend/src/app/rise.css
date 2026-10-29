@@ -16,8 +16,8 @@
   --rise-muted: #8a766a;
   --rise-line: #e8dcd5;
   --rise-line-strong: #dccbc1;
-  --rise-red: #e52d29;
-  --rise-red-deep: #b32d26;
+  --rise-red: #f20707;
+  --rise-red-deep: #f20707;
   --rise-red-soft: #fff0eb;
   --rise-side: #251716;
   --rise-side-text: #d9c5bd;
@@ -32,7 +32,7 @@
   --accent: var(--rise-red);
   --accent-soft: var(--rise-red-soft);
   --success: #3c7a4b;
-  --danger: #b22821;
+  --danger: #f20707;
   --shadow: 0 1px 2px rgba(37, 23, 22, 0.04);
   --radius: 7px;
   --body-bg-gradient: var(--rise-paper);
@@ -330,7 +330,7 @@ h3,
 .eyebrow,
 .topbar .eyebrow,
 .rise-eyebrow {
-  color: #c73328;
+  color: #f20707;
   font-family: "DM Sans", Arial, sans-serif;
   font-size: 11.5px;
   font-weight: 700;
@@ -481,7 +481,7 @@ h3,
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #c73328;
+  color: #f20707;
   margin-bottom: 16px;
 }
 
@@ -831,7 +831,7 @@ h3,
 .field textarea:focus,
 .field select:focus {
   border-color: var(--rise-red);
-  box-shadow: 0 0 0 3px rgba(229, 45, 41, 0.12);
+  box-shadow: 0 0 0 3px rgba(242, 7, 7, 0.12);
   background: #fff;
 }
 
@@ -981,11 +981,11 @@ th,
 }
 
 .rise-auth-step.active {
-  background: #c9372e;
-  border-color: #c9372e;
+  background: #f20707;
+  border-color: #f20707;
   color: #fff;
   transform: translateY(-4px);
-  box-shadow: 0 14px 30px rgba(201, 55, 46, 0.22);
+  box-shadow: 0 14px 30px rgba(242, 7, 7, 0.22);
 }
 
 .rise-auth-step:hover:not(.active) {
@@ -1131,7 +1131,7 @@ th,
 .rise-auth-msg.error {
   background: #fff1ee;
   border: 1px solid #f3c9c2;
-  color: #b22821;
+  color: #f20707;
 }
 
 .rise-auth-msg.success {
@@ -1227,7 +1227,7 @@ th,
 }
 
 .modal .modal-header > .eyebrow:first-child {
-  color: #c73328;
+  color: #f20707;
 }
 
 /* ── Studio / project brand (Setup, New project, Project settings) ── */
@@ -1488,7 +1488,7 @@ th,
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #c73328;
+  color: #f20707;
   padding: 0 6px;
 }
 
@@ -1837,7 +1837,7 @@ a.rise-auth-submit {
 
 .rise-colorfield-error {
   font-size: 12px;
-  color: #b22821;
+  color: #f20707;
 }
 .rise-formrow { align-items: start; }
 .rise-auth2-headline { font-size: clamp(36px, 3.9vw, 56px); }
@@ -1845,7 +1845,7 @@ a.rise-auth-submit {
 .rise-form .field .rise-colorfield-note,
 .field .rise-colorfield-note { font-weight: 400; font-size: 11.5px; color: var(--rise-muted); line-height: 1.5; }
 .rise-form .field .rise-colorfield-error,
-.field .rise-colorfield-error { font-weight: 500; font-size: 12px; color: #b22821; }
+.field .rise-colorfield-error { font-weight: 500; font-size: 12px; color: #f20707; }
 .rise-form .field .rise-colorfield-cmyk label { font-weight: 600; font-size: 11px; color: var(--rise-muted); }
 
 /* ── Official RISE OS logo (29 Oct 2026) ── */
@@ -1880,7 +1880,7 @@ a.rise-auth-submit {
 }
 .rise-logo-word b {
   font-weight: 800;
-  color: #e0332a;
+  color: #f20707;
 }
 .rise-logo-by {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -2074,3 +2074,50 @@ a.rise-auth-submit {
   .edit-footer-actions .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .edit-footer-actions .actions > * { width: 100%; }
 }
+
+/* ══ Client brand update 29 Oct: RISE red #f20707, black sidebar, larger sidebar text ══ */
+:root, :root.light, :root.dark {
+  --rise-red: #f20707;
+  --rise-red-deep: #f20707;
+  --rise-side: #000000;
+  --accent: #f20707;
+}
+.primary-button:hover { background: #f20707; filter: brightness(0.9); }
+.sidebar.rise-side { background: #000000; }
+.rise-credits { background: #161616; }
+.rise-side-label { font-size: 10.5px; }
+.rise-side-nav a { font-size: 14.5px; }
+.rise-credits strong { font-size: 16px; }
+.rise-credits p { font-size: 12px; }
+.rise-side-bottom, .rise-side-bottom span, .rise-side-bottom button { font-size: 12px; }
+.rise-side-nav a[aria-current="page"] { background: #f20707; }
+@media (max-width: 900px) {
+  .sidebar.rise-side { background: #000000; }
+  .rise-side-nav a { font-size: 12px; }
+}
+.rise-colorfield-hexbox {
+  display: flex;
+  align-items: center;
+  width: 150px;
+  border: 1px solid var(--rise-line-strong);
+  border-radius: 6px;
+  background: #fff;
+  padding-left: 12px;
+}
+.rise-colorfield-hexbox:focus-within { border-color: #f20707; box-shadow: 0 0 0 3px rgba(242, 7, 7, 0.12); }
+.rise-colorfield-hexbox.invalid { border-color: #f20707; }
+.rise-colorfield-hexbox > span { font: 600 15px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--rise-ink); }
+.rise-form .field .rise-colorfield-hexbox > span { font: 600 15px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--rise-ink); }
+.rise-colorfield-hexbox input.rise-colorfield-hex,
+.rise-form .field .rise-colorfield-hexbox input.rise-colorfield-hex {
+  width: 100% !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none;
+  padding: 11px 10px 11px 3px !important;
+  background: transparent;
+  font: 500 15px ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+}
+.rise-colorfield-sub,
+.rise-form .field .rise-colorfield-sub { font-size: 12px; font-weight: 600; color: var(--rise-ink); margin-top: 4px; }
